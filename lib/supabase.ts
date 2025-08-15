@@ -110,3 +110,46 @@ export const updateBusiness = async (id: string, patch: Partial<Business>) => {
   if (error) throw error
   return data as Business
 }
+
+export const getOrCreateCustomer = async (businessId: string, localStorageId: string) => {
+  // Try find existing
+  const { data: existing, error: selectError } = await supabase
+    .from('customers')
+    .select('*')
+    .eq('business_id', businessId)
+    .eq('local_storage_id', localStorageId)
+    .maybeSingle()
+  if (selectError) throw selectError
+  if (existing) return existing as Customer
+
+  // Create new
+  const { data, error } = await supabase
+    .from('customers')
+    .insert({ business_id: businessId, local_storage_id: localStorageId, current_visits: 0 })
+    .select()
+    .single()
+  if (error) throw error
+  return data as Customer
+}
+
+export const updateCustomerVisits = async (customerId: string, nextVisits: number) => {
+  const { data, error } = await supabase
+    .from('customers')
+    .update({ current_visits: nextVisits })
+    .eq('id', customerId)
+    .select()
+    .single()
+  if (error) throw error
+  return data as Customer
+}
+
+export const createRedemption = async (businessId: string, customerId: string) => {
+  const { data, error } = await supabase
+    .from('redemptions')
+    .insert({ business_id: businessId, customer_id: customerId })
+    .select()
+    .single()
+  if (error) throw error
+  return data as Redemption
+}
+
