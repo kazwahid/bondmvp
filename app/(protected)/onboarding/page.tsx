@@ -55,16 +55,20 @@ export default function OnboardingPage() {
           <div className="card">
             <label className="block text-sm mb-2">Business Name</label>
             <input className="w-full border rounded-lg px-3 py-2 mb-4" value={businessName} onChange={(e) => setBusinessName(e.target.value)} placeholder="e.g., Bond Coffee" />
-            <label className="block text-sm mb-2">Logo (optional)</label>
+            {!businessName && (<p className="text-sm text-red-600">Please enter a business name.</p>)}
+            <label className="block text-sm mb-2 mt-4">Logo (optional)</label>
             <input type="file" accept="image/*" onChange={(e) => setLogoFile(e.target.files?.[0] ?? null)} />
-            <div className="mt-6 flex justify-end"><button className="btn-primary" onClick={next} disabled={!businessName}>Next</button></div>
+            <div className="mt-6 flex justify-end"><button className="btn-primary disabled:opacity-60" onClick={next} disabled={!businessName}>Next</button></div>
           </div>
         )}
 
         {step === 2 && (
           <div className="card">
             <label className="block text-sm mb-2">Brand Color</label>
-            <input type="color" value={brandColor} onChange={(e) => setBrandColor(e.target.value)} className="h-10 w-16 p-0 border rounded" />
+            <div className="flex items-center gap-4">
+              <input type="color" value={brandColor} onChange={(e) => setBrandColor(e.target.value)} className="h-10 w-16 p-0 border rounded" />
+              <div className="flex-1 h-10 rounded" style={{ backgroundColor: brandColor }} />
+            </div>
             <div className="mt-6 flex justify-between"><button className="btn-secondary" onClick={prev}>Back</button><button className="btn-primary" onClick={next}>Next</button></div>
           </div>
         )}
@@ -73,7 +77,8 @@ export default function OnboardingPage() {
           <div className="card">
             <label className="block text-sm mb-2">Visits required</label>
             <input type="number" min={1} value={visits} onChange={(e) => setVisits(parseInt(e.target.value || '1', 10))} className="w-full border rounded-lg px-3 py-2" />
-            <div className="mt-6 flex justify-between"><button className="btn-secondary" onClick={prev}>Back</button><button className="btn-primary" onClick={handleSubmit} disabled={submitting}>{submitting ? 'Saving…' : 'Finish'}</button></div>
+            <p className="text-sm text-coffee-700 mt-2">Customers earn a reward every <strong>{Math.max(1, visits)}</strong> visits.</p>
+            <div className="mt-6 flex justify-between"><button className="btn-secondary" onClick={prev}>Back</button><button className="btn-primary disabled:opacity-60" onClick={handleSubmit} disabled={submitting}>{submitting ? 'Saving…' : 'Finish'}</button></div>
           </div>
         )}
       </div>

@@ -1,18 +1,7 @@
 'use client'
 
-import { useState } from 'react'
 
 export default function HomePage() {
-  const [loading, setLoading] = useState(false)
-
-  const handleGetStarted = () => {
-    setLoading(true)
-    // For now, just simulate loading
-    setTimeout(() => {
-      alert('Coming soon! Bond will be ready shortly.')
-      setLoading(false)
-    }, 1000)
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-coffee-100 to-coffee-200">
@@ -40,13 +29,12 @@ export default function HomePage() {
           <p className="text-xl md:text-2xl text-coffee-700 mb-12 max-w-2xl mx-auto leading-relaxed animate-slide-up">
             Connect, collaborate, and create meaningful relationships in your professional network
           </p>
-          <button
-            onClick={handleGetStarted}
-            disabled={loading}
-            className="btn-primary text-xl px-12 py-4 shine-effect"
+          <a
+            href="/auth?view=sign_up"
+            className="btn-primary text-xl px-12 py-4 shine-effect inline-block"
           >
-            {loading ? 'Loading...' : 'Get Started Free'}
-          </button>
+            Get Started Free
+          </a>
         </div>
       </main>
 
