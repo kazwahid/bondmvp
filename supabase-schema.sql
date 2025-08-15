@@ -51,6 +51,11 @@ CREATE POLICY "Users can insert own businesses" ON businesses
 CREATE POLICY "Users can update own businesses" ON businesses
   FOR UPDATE USING (auth.uid() = user_id);
 
+-- Public read policy for businesses to power customer page
+CREATE POLICY "Anyone can view businesses" ON businesses
+  FOR SELECT USING (true);
+
+
 -- Customer policies (public read for QR code functionality)
 CREATE POLICY "Anyone can view customers" ON customers
   FOR SELECT USING (true);
