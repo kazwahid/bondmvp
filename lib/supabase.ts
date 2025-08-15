@@ -43,9 +43,9 @@ export const getBusiness = async (businessId: string) => {
     .from('businesses')
     .select('*')
     .eq('id', businessId)
-    .single()
+    .maybeSingle()
   if (error) throw error
-  return data as Business
+  return (data as Business) || null
 }
 
 export const getBusinessBySlug = async (slug: string) => {

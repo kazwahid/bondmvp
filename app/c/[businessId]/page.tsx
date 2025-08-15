@@ -38,12 +38,14 @@ export default function CustomerPage() {
     const go = async () => {
       try {
         const b = await getBusiness(businessId)
+        if (!b) throw new Error('Business not found')
         setBiz(b)
         const deviceId = getOrSetDeviceId(businessId)
         const customer = await getOrCreateCustomer(businessId, deviceId)
         setCustomerId(customer.id)
         setVisits(customer.current_visits)
-      } catch (e) {
+      } catch (e: any) {
+        console.error('Customer page load error:', e?.message || e)
         setError('Unable to load loyalty page')
       } finally {
         setLoading(false)
