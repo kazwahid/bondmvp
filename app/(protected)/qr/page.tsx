@@ -16,17 +16,18 @@ export default function QRPage() {
   )
 }
 
+function tintHex(hex: string) {
+  // ensure valid hex #RRGGBB
+  if (!/^#?[0-9A-Fa-f]{6}$/.test(hex)) return '#000000'
+  const clean = hex.startsWith('#') ? hex.slice(1) : hex
+  return `#${clean}`
+}
+
 function QRInner() {
   const { user } = useAuth()
   const [svg, setSvg] = useState<string>('')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-
-  const targetUrl = useMemo(() => {
-    // For MVP we’ll route customers by business id for now.
-    // Later we can move to slugs: `/c/{slug}`
-    return ''
-  }, [])
 
   useEffect(() => {
     const go = async () => {
@@ -34,8 +35,16 @@ function QRInner() {
         if (!user) return
         const biz = await getBusinessByUserId(user.id)
         const url = `${window.location.origin}/c/${biz.id}`
-        const svgString = await QRCode.toString(url, { type: 'svg', margin: 1, scale: 8, color: { dark: '#000', light: '#ffffff00' } })
-        setSvg(svgString)
+        const dark = tintHex(biz.brand_color || '#000000')
+        const svgString = await QRCode.toString(url, { type: 'svg', margin: 1, scale: 8, color: { dark, light: '#ffffff' } })
+        // If there's a logo, overlay it in the center (simple SVG group)
+        if (biz.logo_url) {
+          const overlay = `<image href="${biz.logo_url}" x="40%" y="40%" width="20%" height="20%" preserveAspectRatio="xMidYMid meet"/>`
+          const injected = svgString.replace('</svg>', `${overlay}</svg>`)
+          setSvg(injected)
+        } else {
+          setSvg(svgString)
+        }
       } catch (e) {
         setError('Failed to generate QR code')
       } finally {

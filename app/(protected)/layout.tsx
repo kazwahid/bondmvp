@@ -23,6 +23,7 @@ export default function ProtectedLayout({ children }: { children: ReactNode }) {
               <nav className="hidden sm:flex items-center gap-4 text-sm">
                 <a href="/dashboard" className="text-coffee-700 hover:underline">Dashboard</a>
                 <a href="/qr" className="text-coffee-700 hover:underline">QR Code</a>
+                <a href="/settings" className="text-coffee-700 hover:underline">Settings</a>
               </nav>
             </div>
             <div className="flex items-center gap-3">
