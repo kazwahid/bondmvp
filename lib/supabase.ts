@@ -43,7 +43,7 @@ export const getBusiness = async (businessId: string) => {
     .select('*')
     .eq('id', businessId)
     .single()
-  
+
   if (error) throw error
   return data as Business
 }
@@ -54,7 +54,7 @@ export const getBusinessByUserId = async (userId: string) => {
     .select('*')
     .eq('user_id', userId)
     .single()
-  
+
   if (error) throw error
   return data as Business
 }
@@ -65,7 +65,7 @@ export const createBusiness = async (business: Omit<Business, 'id' | 'created_at
     .insert(business)
     .select()
     .single()
-  
+
   if (error) throw error
   return data as Business
 }
@@ -73,16 +73,40 @@ export const createBusiness = async (business: Omit<Business, 'id' | 'created_at
 export const uploadLogo = async (file: File, businessId: string) => {
   const fileExt = file.name.split('.').pop()
   const fileName = `${businessId}-logo.${fileExt}`
-  
-  const { data, error } = await supabase.storage
+
+  const { error } = await supabase.storage
     .from('logos')
     .upload(fileName, file, { upsert: true })
-  
+
   if (error) throw error
-  
+
   const { data: { publicUrl } } = supabase.storage
     .from('logos')
     .getPublicUrl(fileName)
-  
+
   return publicUrl
+}
+
+export const uploadLogoForUser = async (file: File, userId: string) => {
+  const fileExt = file.name.split('.').pop()
+  const fileName = `${userId}-logo.${fileExt}`
+  const { error } = await supabase.storage
+    .from('logos')
+    .upload(fileName, file, { upsert: true })
+  if (error) throw error
+  const { data: { publicUrl } } = supabase.storage
+    .from('logos')
+    .getPublicUrl(fileName)
+  return publicUrl
+}
+
+export const updateBusiness = async (id: string, patch: Partial<Business>) => {
+  const { data, error } = await supabase
+    .from('businesses')
+    .update(patch)
+    .eq('id', id)
+    .select()
+    .single()
+  if (error) throw error
+  return data as Business
 }
