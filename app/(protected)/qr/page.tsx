@@ -28,6 +28,8 @@ function QRInner() {
   const [svg, setSvg] = useState<string>('')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [link, setLink] = useState<string>('')
+  const [copied, setCopied] = useState(false)
 
   useEffect(() => {
     const go = async () => {
@@ -35,6 +37,7 @@ function QRInner() {
         if (!user) return
         const biz = await getBusinessByUserId(user.id)
         const url = `${window.location.origin}/c/${biz.id}`
+        setLink(url)
         const dark = tintHex(biz.brand_color || '#000000')
         const svgString = await QRCode.toString(url, { type: 'svg', margin: 1, scale: 8, color: { dark, light: '#ffffff' } })
         // If there's a logo, overlay it in the center (simple SVG group)
@@ -106,8 +109,13 @@ function QRInner() {
           <button className="btn-secondary" onClick={() => download('svg')}>Download SVG</button>
           <button className="btn-primary" onClick={() => download('png')}>Download PNG</button>
         </div>
+        <div className="mt-4 flex flex-col items-center gap-2 w-full">
+          <div className="text-sm text-coffee-700 break-all">{link}</div>
+          <button className="btn-secondary" onClick={async () => { await navigator.clipboard.writeText(link); setCopied(true); setTimeout(() => setCopied(false), 1500); }}>{copied ? 'Copied!' : 'Copy link'}</button>
+        </div>
       </div>
     </div>
   )
 }
+
 

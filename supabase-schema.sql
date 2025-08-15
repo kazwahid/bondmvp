@@ -6,6 +6,7 @@ CREATE TABLE businesses (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
   business_name TEXT NOT NULL,
+  slug TEXT UNIQUE,
   logo_url TEXT,
   brand_color VARCHAR(7) NOT NULL DEFAULT '#3c2415',
   loyalty_visits_required INTEGER NOT NULL DEFAULT 7,

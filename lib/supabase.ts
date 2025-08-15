@@ -10,6 +10,7 @@ export interface Business {
   id: string
   user_id: string
   business_name: string
+  slug?: string | null
   logo_url: string | null
   brand_color: string
   loyalty_visits_required: number
@@ -43,10 +44,21 @@ export const getBusiness = async (businessId: string) => {
     .select('*')
     .eq('id', businessId)
     .single()
-
   if (error) throw error
   return data as Business
 }
+
+export const getBusinessBySlug = async (slug: string) => {
+  const { data, error } = await supabase
+    .from('businesses')
+    .select('*')
+    .eq('slug', slug)
+    .maybeSingle()
+  if (error) throw error
+  return (data as Business) || null
+
+}
+
 
 export const getBusinessByUserId = async (userId: string) => {
   const { data, error } = await supabase
