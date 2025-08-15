@@ -1,6 +1,6 @@
 import { Inter, Poppins } from 'next/font/google'
 import './globals.css'
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -13,10 +13,14 @@ const poppins = Poppins({
   variable: '--font-poppins'
 })
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+}
+
 export const metadata: Metadata = {
   title: 'Bond - Beautiful Loyalty for Coffee Shops',
   description: 'Create stunning digital loyalty programs that customers love.',
-  viewport: 'width=device-width, initial-scale=1',
 }
 
 export default function RootLayout({
