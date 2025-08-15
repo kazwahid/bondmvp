@@ -14,10 +14,6 @@ export default function HomePage() {
     }, 1000)
   }
 
-  const handleSignIn = () => {
-    alert('Sign in coming soon!')
-  }
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-coffee-100 to-coffee-200">
       {/* Navigation */}
@@ -26,12 +22,12 @@ export default function HomePage() {
           <div className="logo-bond">
             Bond
           </div>
-          <button 
-            onClick={handleSignIn}
+          <a
+            href="/auth"
             className="btn-secondary"
           >
             Sign In
-          </button>
+          </a>
         </div>
       </nav>
 
