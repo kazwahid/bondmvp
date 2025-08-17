@@ -6,6 +6,7 @@ import ProtectedPage from '@/components/auth/ProtectedPage'
 import { useAuth } from '@/hooks/useAuth'
 import { useState } from 'react'
 import { createBusiness, updateBusiness, uploadLogoForUser } from '@/lib/supabase'
+import { slugify, randomSuffix } from '@/utils/slug'
 
 export default function OnboardingPage() {
   const { user } = useAuth()
@@ -23,14 +24,34 @@ export default function OnboardingPage() {
     if (!user) return
     setSubmitting(true)
     try {
-      // First create the business row
-      const newBiz = await createBusiness({
-        user_id: user.id,
-        business_name: businessName || 'My Business',
-        logo_url: null,
-        brand_color: brandColor,
-        loyalty_visits_required: visits,
-      } as any)
+      // First create the business row (with slug), retry on slug conflicts
+      const base = slugify(businessName || 'my-business')
+      let newBiz: any = null
+      let attempts = 0
+      let lastErr: any = null
+      while (!newBiz && attempts < 3) {
+        const candidate = `${base}-${randomSuffix(4)}`
+        try {
+          const visitsNormalized = Math.max(1, Number.isFinite(visits as any) ? Math.round(visits as any) : 1)
+          newBiz = await createBusiness({
+            user_id: user.id,
+            business_name: businessName || 'My Business',
+            slug: candidate,
+            logo_url: null,
+            brand_color: brandColor,
+            loyalty_visits_required: visitsNormalized,
+          } as any)
+        } catch (e: any) {
+          lastErr = e
+          // Unique violation on slug – try another
+          if (e?.code === '23505' || (e?.message || '').toLowerCase().includes('duplicate key') ) {
+            attempts++
+            continue
+          }
+          throw e
+        }
+      }
+      if (!newBiz) throw lastErr || new Error('Unable to create business')
 
       // Upload logo if provided and patch business
       if (logoFile) {
@@ -76,8 +97,20 @@ export default function OnboardingPage() {
         {step === 3 && (
           <div className="card">
             <label className="block text-sm mb-2">Visits required</label>
-            <input type="number" min={1} value={visits} onChange={(e) => setVisits(parseInt(e.target.value || '1', 10))} className="w-full border rounded-lg px-3 py-2" />
-            <p className="text-sm text-coffee-700 mt-2">Customers earn a reward every <strong>{Math.max(1, visits)}</strong> visits.</p>
+            <input
+              type="number"
+              min={1}
+              value={Number.isNaN(visits) ? '' : visits}
+              onChange={(e) => {
+                const raw = e.target.value
+                if (raw === '') { setVisits(NaN as any); return }
+                const n = parseInt(raw, 10)
+                setVisits(Number.isNaN(n) ? (NaN as any) : n)
+              }}
+              onBlur={() => { if (Number.isNaN(visits) || visits < 1) setVisits(1) }}
+              className="w-full border rounded-lg px-3 py-2"
+            />
+            <p className="text-sm text-coffee-700 mt-2">Customers earn a reward every <strong>{Math.max(1, Number.isNaN(visits) ? 1 : visits)}</strong> visits.</p>
             <div className="mt-6 flex justify-between"><button className="btn-secondary" onClick={prev}>Back</button><button className="btn-primary disabled:opacity-60" onClick={handleSubmit} disabled={submitting}>{submitting ? 'Saving…' : 'Finish'}</button></div>
           </div>
         )}

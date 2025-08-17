@@ -6,7 +6,15 @@ import ProtectedPage from '@/components/auth/ProtectedPage'
 import { useAuth } from '@/hooks/useAuth'
 import { useEffect, useMemo, useState } from 'react'
 import QRCode from 'qrcode'
-import { getBusinessByUserId } from '@/lib/supabase'
+import { getBusinessByUserId, mintQrToken } from '@/lib/supabase'
+import LampHeader from '@/components/aceternity/LampHeader'
+import CometCard from '@/components/aceternity/CometCard'
+import AnimatedPin from '@/components/aceternity/AnimatedPin'
+import LinkPreview from '@/components/aceternity/LinkPreview'
+import LogoLoader from '@/components/aceternity/LogoLoader'
+import AuroraBackground from '@/components/aceternity/AuroraBackground'
+import MaskedLink from '@/components/aceternity/MaskedLink'
+import FeatureCard from '@/components/aceternity/FeatureCard'
 
 export default function QRPage() {
   return (
@@ -36,17 +44,20 @@ function QRInner() {
       try {
         if (!user) return
         const biz = await getBusinessByUserId(user.id)
-        const url = `${window.location.origin}/c/${biz.id}`
+        const handle = biz.slug || biz.id
+        const token = await mintQrToken(biz.id)
+        const url = `${window.location.origin}/c/${handle}?t=${token}`
         setLink(url)
         const dark = tintHex(biz.brand_color || '#000000')
         const svgString = await QRCode.toString(url, { type: 'svg', margin: 1, scale: 8, color: { dark, light: '#ffffff' } })
         // If there's a logo, overlay it in the center (simple SVG group)
+        const svgWithDataUrl = svgString.replace('<svg', `<svg data-url="${url}"`)
         if (biz.logo_url) {
           const overlay = `<image href="${biz.logo_url}" x="40%" y="40%" width="20%" height="20%" preserveAspectRatio="xMidYMid meet"/>`
-          const injected = svgString.replace('</svg>', `${overlay}</svg>`)
+          const injected = svgWithDataUrl.replace('</svg>', `${overlay}</svg>`)
           setSvg(injected)
         } else {
-          setSvg(svgString)
+          setSvg(svgWithDataUrl)
         }
       } catch (e) {
         setError('Failed to generate QR code')
@@ -93,28 +104,44 @@ function QRInner() {
   }
 
   if (loading) {
-    return <div className="min-h-[50vh] flex items-center justify-center text-coffee-700">Generating…</div>
+    return <div className="min-h-[50vh] flex flex-col items-center justify-center text-coffee-700 gap-3"><LogoLoader className="h-10 w-10" />Generating…</div>
   }
   if (error) {
     return <div className="text-red-600">{error}</div>
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-6 py-10">
-      <h1 className="text-3xl font-heading text-coffee-800 mb-6">Your QR Code</h1>
-      <div className="bg-white border border-coffee-200 rounded-xl p-6 flex flex-col items-center">
-        <div className="bg-white p-4 rounded-lg border" dangerouslySetInnerHTML={{ __html: svg }} />
-        <p className="text-coffee-700 mt-4">This QR links to your customer page.</p>
-        <div className="mt-6 flex gap-3">
-          <button className="btn-secondary" onClick={() => download('svg')}>Download SVG</button>
-          <button className="btn-primary" onClick={() => download('png')}>Download PNG</button>
-        </div>
-        <div className="mt-4 flex flex-col items-center gap-2 w-full">
-          <div className="text-sm text-coffee-700 break-all">{link}</div>
-          <button className="btn-secondary" onClick={async () => { await navigator.clipboard.writeText(link); setCopied(true); setTimeout(() => setCopied(false), 1500); }}>{copied ? 'Copied!' : 'Copy link'}</button>
+    <AuroraBackground variant="qr">
+      <div className="max-w-4xl mx-auto px-6 py-10">
+        <LampHeader title={<span className="inline-flex items-center gap-2">Your Live QR <AnimatedPin className="h-5 w-5" /></span>} subtitle="Customers scan this to add a visit." />
+
+        <div className="grid md:grid-cols-2 gap-6">
+          <FeatureCard variant="highlight" className="flex flex-col items-center">
+            <div className="bg-white p-6 rounded-xl border shadow-sm" dangerouslySetInnerHTML={{ __html: svg }} />
+            <div className="mt-6 flex gap-3">
+              <button className="btn-secondary" onClick={() => download('svg')}>Download SVG</button>
+              <button className="btn-primary" onClick={() => download('png')}>Download PNG</button>
+            </div>
+          </FeatureCard>
+
+          <FeatureCard variant="glow" title="Share your QR" description="Copy the link or share directly with customers">
+            <div className="space-y-3">
+              <MaskedLink url={link} title="Customer Page" />
+              <button
+                className="w-full btn-secondary"
+                onClick={async () => {
+                  await navigator.clipboard.writeText(link);
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 1500);
+                }}
+              >
+                {copied ? 'Copied!' : 'Copy link'}
+              </button>
+            </div>
+          </FeatureCard>
         </div>
       </div>
-    </div>
+    </AuroraBackground>
   )
 }
 

@@ -6,9 +6,9 @@ import { Suspense, useEffect, useMemo, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
-import { Auth } from '@supabase/auth-ui-react'
-import { ThemeSupa } from '@supabase/auth-ui-shared'
 import { getBusinessByUserId } from '@/lib/supabase'
+import SignupForm from '@/components/aceternity/SignupForm'
+import AuroraBackground from '@/components/aceternity/AuroraBackground'
 
 function AuthInner() {
   const router = useRouter()
@@ -16,6 +16,7 @@ function AuthInner() {
   const initialView = useMemo(() => (search?.get('view') === 'sign_up' ? 'sign_up' : 'sign_in'), [search])
   const { user, loading } = useAuth()
   const [redirecting, setRedirecting] = useState(false)
+  const [currentView, setCurrentView] = useState<'sign_in' | 'sign_up'>(initialView)
 
   useEffect(() => {
     if (loading) return
@@ -34,34 +35,35 @@ function AuthInner() {
 
   if (loading || (user && redirecting)) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-6 bg-gradient-to-br from-coffee-100 to-coffee-200">
+      <div className="min-h-screen flex items-center justify-center px-6 bg-gradient-to-br from-cream-50 to-cream-100">
         <div className="text-coffee-700">Loading…</div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-6 bg-gradient-to-br from-coffee-100 to-coffee-200">
-      <div className="w-full max-w-md bg-white border border-coffee-200 rounded-xl p-6 shadow-sm">
-        <h1 className="text-2xl font-heading text-coffee-800 mb-4 text-center">Welcome to Bond</h1>
-        <Auth
-          supabaseClient={supabase}
-          view={initialView as any}
-          appearance={{
-            theme: ThemeSupa,
-            variables: {
-              default: {
-                colors: {
-                  brand: 'var(--color-coffee-800)',
-                  brandAccent: 'var(--color-coffee-700)'
-                }
-              }
-            }
-          }}
-          providers={[]}
+    <AuroraBackground variant="auth">
+      <div className="relative min-h-screen flex items-center justify-center px-6">
+        <div className="w-full max-w-md rounded-2xl border border-coffee-200 bg-white/70 backdrop-blur p-8 shadow-[0_8px_30px_rgba(0,0,0,0.04)]">
+        <div className="flex items-center justify-center gap-2 mb-6">
+          <img src="/brand/bond-logo.svg" className="h-8 w-8" />
+          <img src="/brand/bond-wordmark.svg" className="h-7" />
+        </div>
+        <div className="text-center mb-6">
+          <h1 className="text-2xl font-heading text-coffee-800 mb-2">
+            {currentView === 'sign_up' ? 'Create your account' : 'Welcome back'}
+          </h1>
+          <p className="text-coffee-700 text-sm">
+            {currentView === 'sign_up' ? 'Start building customer loyalty today' : 'Sign in to your Bond dashboard'}
+          </p>
+        </div>
+        <SignupForm
+          view={currentView}
+          onToggle={() => setCurrentView(currentView === 'sign_up' ? 'sign_in' : 'sign_up')}
         />
+        </div>
       </div>
-    </div>
+    </AuroraBackground>
   )
 }
 
