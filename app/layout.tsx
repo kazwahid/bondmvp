@@ -13,13 +13,14 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-	title: 'Bond Studio - Crafting Memorable Experiences',
+	title: 'BondStudio ',
 	description: 'Building connections that last, loyalty that grows, and experiences that inspire.',
 	icons: {
-		icon: '/favicon.svg',
-		shortcut: '/favicon.svg',
-		apple: '/favicon.svg',
+		icon: '/favicon.svg?v=5',
+		shortcut: '/favicon.svg?v=5',
+		apple: '/favicon.svg?v=5',
 	},
+	manifest: '/manifest.json',
 }
 
 export default function RootLayout({

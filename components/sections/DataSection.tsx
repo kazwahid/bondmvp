@@ -161,7 +161,7 @@ export default function DataSection() {
               </ResponsiveContainer>
             </div>
             <div className="mt-4">
-              <div className="text-2xl font-bold text-black">$67K</div>
+              <div className="text-2xl font-bold text-black">PKR870K</div>
               <div className="text-sm text-gray-500">this month</div>
             </div>
           </motion.div>
@@ -178,7 +178,7 @@ export default function DataSection() {
           {[
             { label: "Avg. Visit Frequency", value: "2.4x", change: "+12%" },
             { label: "Customer Retention", value: "89%", change: "+5%" },
-            { label: "Revenue per Customer", value: "$127", change: "+18%" },
+            { label: "Revenue per Customer", value: "PKR969", change: "+18%" },
             { label: "Program ROI", value: "340%", change: "+23%" }
           ].map((metric, index) => (
             <div key={metric.label} className="text-center">

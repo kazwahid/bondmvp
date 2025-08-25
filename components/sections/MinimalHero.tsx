@@ -228,12 +228,12 @@ export default function MinimalHero() {
             {/* Main Headline */}
             <div ref={textRef} className="mb-20">
               <motion.h1 
-                className="text-5xl md:text-6xl lg:text-5xl font-black leading-[0.8] tracking-tight text-white font-display uppercase text-reveal"
+                className="text-6xl md:text-6xl lg:text-6xl font-black leading-[0.8] tracking-tight text-white font-display uppercase text-reveal"
                 initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 1.2, delay: 0.5 }}
               >
-                {splitText(' Crafting memorable experiences')}
+                {splitText(' Crafting memorable experience')}
               </motion.h1>
             </div>
 
@@ -244,7 +244,7 @@ export default function MinimalHero() {
               transition={{ delay: 1.2, duration: 0.8 }}
               className="text-xl md:text-2xl text-muted max-w-3xl mx-auto font-light font-sans mb-20 leading-relaxed"
             >
-             © BONDSTUDIO
+              BondStudio©
             </motion.p>
 
             {/* CTA Buttons - Perfectly Spaced */}

@@ -1,0 +1,17 @@
+{
+  "name": "Bond Studio",
+  "short_name": "Bond",
+  "description": "Building connections that last, loyalty that grows, and experiences that inspire.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3c2415",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
