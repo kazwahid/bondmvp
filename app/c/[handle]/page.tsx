@@ -1,187 +1,271 @@
 'use client'
 
-export const dynamic = 'force-dynamic'
-
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
-import { AnimatePresence, motion } from 'framer-motion'
-import AuroraBackground from '@/components/aceternity/AuroraBackground'
-import { Business, createRedemption, getBusiness, getBusinessBySlug, getOrCreateCustomer, updateCustomerVisits, logVisitEvent, createReferral, getOpenReferralForReferrer, markReferralCredited, incrementVisitWithToken } from '@/lib/supabase'
+import { motion } from 'framer-motion'
+import { 
+  CheckCircle, 
+  Star, 
+  Heart, 
+  MessageCircle, 
+  Share2,
+  ArrowRight,
+  Clock,
+  MapPin,
+  Phone,
+  Globe
+} from 'lucide-react'
 
-import OTPBind from '@/components/customer/OTPBind'
-
-import LastActivity from '@/components/customer/LastActivity'
-
-function getOrSetDeviceId(businessId: string) {
-  const key = `bond_device_${businessId}`
-  let id = localStorage.getItem(key)
-  if (!id) {
-    id = crypto.randomUUID()
-    localStorage.setItem(key, id)
-  }
-  return id
+interface Business {
+  name: string
+  industry: string
+  location: string
+  phone: string
+  website: string
+  description: string
+  logo?: string
 }
 
 export default function CustomerPage() {
-  const params = useParams<{ handle: string }>()
-  const handle = decodeURIComponent(params.handle as string)
-  const [biz, setBiz] = useState<Business | null>(null)
+  const params = useParams()
+  const [business, setBusiness] = useState<Business | null>(null)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [customerId, setCustomerId] = useState<string | null>(null)
-  const [visits, setVisits] = useState(0)
-
-  const [refToken, setRefToken] = useState<string | null>(null)
-
-  const progress = useMemo(() => {
-    if (!biz) return 0
-    return Math.min(100, Math.round((visits / biz.loyalty_visits_required) * 100))
-  }, [visits, biz])
+  const [checkedIn, setCheckedIn] = useState(false)
+  const [rating, setRating] = useState(0)
+  const [feedback, setFeedback] = useState('')
 
   useEffect(() => {
-    const go = async () => {
+    // Simulate fetching business data based on handle
+    const fetchBusiness = async () => {
       try {
-        // Accept either UUID or slug
-        let b: Business | null = null
-        const isUuid = /^[0-9a-fA-F-]{36}$/.test(handle)
-        b = isUuid ? await getBusiness(handle) : await getBusinessBySlug(handle)
-        if (!b) throw new Error('Business not found')
-        setBiz(b)
-        const deviceId = getOrSetDeviceId(b.id)
-        const customer = await getOrCreateCustomer(b.id, deviceId)
-        // Ensure a reusable referral token exists for this referrer
-        try {
-          const existing = await getOpenReferralForReferrer(b.id, customer.id)
-          if (existing && existing.token) setRefToken(existing.token)
-          else {
-            const token = crypto.randomUUID().slice(0, 8)
-            await createReferral(b.id, customer.id, token)
-            setRefToken(token)
-          }
-        } catch {}
-        setCustomerId(customer.id)
-        setVisits(customer.current_visits)
-      } catch (e: any) {
-        console.error('Customer page load error:', e?.message || e)
-        setError('Unable to load loyalty page')
-      } finally {
+        setLoading(true)
+        // In a real app, this would fetch from your API
+        const mockBusiness: Business = {
+          name: "Bond Studio",
+          industry: "Creative Agency",
+          location: "San Francisco, CA",
+          phone: "+1 (555) 123-4567",
+          website: "www.bondstudio.com",
+          description: "We craft memorable experiences that build lasting connections and inspire loyalty."
+        }
+        
+        setTimeout(() => {
+          setBusiness(mockBusiness)
+          setLoading(false)
+        }, 1000)
+      } catch (error) {
+        console.error('Error fetching business:', error)
         setLoading(false)
       }
     }
-    go()
-  }, [handle])
 
-  const [cooldown, setCooldown] = useState(false)
-  const addVisit = async () => {
-    if (!biz || !customerId || cooldown) return
-    setCooldown(true)
-    const device = getOrSetDeviceId(biz.id)
-    // Require a valid short-lived token to increment
-    const url = new URL(window.location.href)
-    const token = url.searchParams.get('t')
-    const ref = url.searchParams.get('ref')
-    if (!token) { setCooldown(false); alert('Invalid or missing QR token. Please scan the merchant QR.'); return }
-    try {
-      const result = await incrementVisitWithToken(biz.id, customerId, device, token, ref)
-      setVisits(result.current_visits)
-    } catch (e: any) {
-      const msg = (e?.message || '').toLowerCase()
-      if (msg.includes('velocity_violation')) alert('Too soon since your last check-in. Please try again later.')
-      else alert('This QR token is invalid or expired. Please rescan the merchant QR.')
-    }
-    // If landing with a referral token and this is the first visit, try to credit
-    try {
-      const url = new URL(window.location.href)
-      const token = url.searchParams.get('ref')
-      if (token && visits === 0) {
-        await markReferralCredited(token, customerId)
-      }
-    } catch {}
-    setTimeout(() => setCooldown(false), 4000)
+    fetchBusiness()
+  }, [params.handle])
+
+  const handleCheckIn = () => {
+    setCheckedIn(true)
+    // In a real app, this would send data to your backend
   }
 
-  const redeem = async () => {
-    if (!biz || !customerId) return
-    if (visits < biz.loyalty_visits_required) return
-    await createRedemption(biz.id, customerId)
-    const updated = await updateCustomerVisits(customerId, 0)
-    setVisits(updated.current_visits)
+  const handleRating = (value: number) => {
+    setRating(value)
   }
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center text-coffee-700">Loading…</div>
-  if (error || !biz) return <div className="min-h-screen flex items-center justify-center text-red-600">{error || 'Not found'}</div>
+  const handleSubmitFeedback = () => {
+    // In a real app, this would send feedback to your backend
+    console.log('Feedback submitted:', { rating, feedback })
+  }
 
-  const nearGoal = biz && visits >= biz.loyalty_visits_required - 1 && visits < biz.loyalty_visits_required
-
-  return (
-    <AuroraBackground variant="customer">
-      <div className="min-h-screen flex flex-col items-center justify-start p-6">
-        <div className="w-full max-w-md mt-10 text-center">
-        {biz.logo_url && (
-          <img src={biz.logo_url} alt="Logo" className="mx-auto mb-4 h-16 object-contain" />
-        )}
-        <h1 className="font-heading text-2xl mb-2" style={{ color: biz.brand_color }}>Welcome back!</h1>
-        <div className="rounded-2xl border border-coffee-200 bg-white/70 backdrop-blur shadow-[0_8px_30px_rgba(0,0,0,0.04)] p-4">
-          <div className="h-6 w-full bg-coffee-100 rounded-full overflow-hidden">
-            <motion.div
-              className="h-full"
-              style={{ backgroundColor: biz.brand_color }}
-              initial={{ width: 0 }}
-              animate={{ width: `${progress}%` }}
-              transition={{ type: 'spring', stiffness: 120, damping: 20 }}
-            />
-          </div>
-          <p className="mt-3 text-coffee-700">{visits} / {biz.loyalty_visits_required} visits</p>
-          <AnimatePresence>
-            {nearGoal && (
-              <motion.p
-                className="text-coffee-700 text-sm"
-                initial={{ opacity: 0, y: -4 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -4 }}
-              >
-                {visits === biz.loyalty_visits_required - 1 ? 'One visit to go!' : 'Almost there!'}
-              </motion.p>
-            )}
-          </AnimatePresence>
-          <div className="mt-6 flex gap-3 justify-center items-center">
-            <button className="btn-secondary disabled:opacity-60" onClick={addVisit} disabled={cooldown}>Add visit</button>
-            <button className={`btn-primary disabled:opacity-60 ${visits >= biz.loyalty_visits_required ? 'shine-effect' : ''}`} style={{ backgroundColor: biz.brand_color }} onClick={redeem} disabled={visits < biz.loyalty_visits_required}>Redeem</button>
-          </div>
-          <p className="mt-2 text-xs text-coffee-600">{cooldown ? 'Saved' : ' '}</p>
-        </div>
-          <div className="mt-6 text-sm text-coffee-700">
-            <div className="p-3 border rounded-lg bg-white/80">
-              <div className="font-heading text-coffee-800 mb-1">Save your progress</div>
-              <div className="text-coffee-700">Add your phone to keep visits across devices.</div>
-              <OTPBind customerId={customerId || undefined} />
-            </div>
-          </div>
-
-          <div className="mt-4 text-sm text-coffee-700">
-            <div className="p-3 border rounded-lg bg-white/80">
-              <div className="font-heading text-coffee-800 mb-1">Last activity</div>
-              <LastActivity businessId={biz.id} customerId={customerId || undefined} />
-            </div>
-          </div>
-
-
-          <div className="mt-4 text-sm text-coffee-700">
-            <div className="p-3 border rounded-lg bg-white/80">
-              <div className="font-heading text-coffee-800 mb-1">Refer a friend</div>
-              <div className="text-coffee-700">Share your link. When a friend checks in, you earn a free visit.</div>
-              <div className="mt-2 flex gap-2">
-                <a className="flex-1 text-sm text-coffee-700 break-all rounded border border-coffee-200 bg-white px-3 py-2 hover:underline" href={typeof window !== 'undefined' && refToken && biz ? `${window.location.origin}/c/${encodeURIComponent(biz.slug || biz.id)}?ref=${refToken}` : '#'} target="_blank" rel="noopener noreferrer">
-                  {typeof window !== 'undefined' && refToken && biz ? `${window.location.origin}/c/${encodeURIComponent(biz.slug || biz.id)}?ref=${refToken}` : ''}
-                </a>
-                <button className="btn-secondary" onClick={async () => { if (biz && refToken) await navigator.clipboard.writeText(`${window.location.origin}/c/${encodeURIComponent(biz.slug || biz.id)}?ref=${refToken}`); }}>Copy</button>
-              </div>
-            </div>
-          </div>
-
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-white/80 text-lg">Loading business information...</p>
         </div>
       </div>
-    </AuroraBackground>
+    )
+  }
+
+  if (!business) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+            <CheckCircle className="w-8 h-8 text-red-400" />
+          </div>
+          <h2 className="text-2xl font-bold text-white mb-2">Business Not Found</h2>
+          <p className="text-white/60 mb-6">The business you're looking for doesn't exist or the link is invalid.</p>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+      <div className="max-w-4xl mx-auto px-6 py-12">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-12"
+        >
+          <div className="w-20 h-20 bg-gradient-to-br from-accent to-accent-bright rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <span className="text-white font-bold text-3xl">B</span>
+          </div>
+          <h1 className="text-4xl font-bold text-white mb-4">{business.name}</h1>
+          <p className="text-xl text-white/60 max-w-2xl mx-auto">{business.description}</p>
+        </motion.div>
+
+        {/* Check-in Section */}
+        {!checkedIn ? (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8 mb-8"
+          >
+            <div className="text-center mb-6">
+              <h2 className="text-2xl font-semibold text-white mb-2">Welcome!</h2>
+              <p className="text-white/60">Check in to let us know you've arrived</p>
+            </div>
+            
+            <button
+              onClick={handleCheckIn}
+              className="w-full bg-gradient-to-r from-accent to-accent-bright text-white py-4 px-8 rounded-xl font-semibold text-lg hover:from-accent/90 hover:to-accent-bright/90 transition-all duration-200 transform hover:scale-105"
+            >
+              Check In Now
+            </button>
+          </motion.div>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+            className="bg-green-500/20 backdrop-blur-xl border border-green-500/30 rounded-2xl p-8 mb-8 text-center"
+          >
+            <CheckCircle className="w-16 h-16 text-green-400 mx-auto mb-4" />
+            <h2 className="text-2xl font-semibold text-white mb-2">Successfully Checked In!</h2>
+            <p className="text-white/80">Thank you for visiting {business.name}</p>
+          </motion.div>
+        )}
+
+        {/* Business Information */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8"
+        >
+          <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+            <div className="flex items-center space-x-3 mb-4">
+              <MapPin className="w-5 h-5 text-blue-400" />
+              <h3 className="text-lg font-semibold text-white">Location</h3>
+            </div>
+            <p className="text-white/80">{business.location}</p>
+          </div>
+
+          <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+            <div className="flex items-center space-x-3 mb-4">
+              <Clock className="w-5 h-5 text-purple-400" />
+              <h3 className="text-lg font-semibold text-white">Industry</h3>
+            </div>
+            <p className="text-white/80">{business.industry}</p>
+          </div>
+
+          <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+            <div className="flex items-center space-x-3 mb-4">
+              <Phone className="w-5 h-5 text-green-400" />
+              <h3 className="text-lg font-semibold text-white">Contact</h3>
+            </div>
+            <p className="text-white/80">{business.phone}</p>
+          </div>
+
+          <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+            <div className="flex items-center space-x-3 mb-4">
+              <Globe className="w-5 h-5 text-yellow-400" />
+              <h3 className="text-lg font-semibold text-white">Website</h3>
+            </div>
+            <p className="text-white/80">{business.website}</p>
+          </div>
+        </motion.div>
+
+        {/* Rating & Feedback */}
+        {checkedIn && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.6 }}
+            className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8"
+          >
+            <div className="text-center mb-6">
+              <h2 className="text-2xl font-semibold text-white mb-2">How was your experience?</h2>
+              <p className="text-white/60">Rate your visit and share your thoughts</p>
+            </div>
+
+            {/* Rating Stars */}
+            <div className="flex justify-center space-x-2 mb-6">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <button
+                  key={star}
+                  onClick={() => handleRating(star)}
+                  className={`p-2 rounded-lg transition-all duration-200 ${
+                    star <= rating 
+                      ? 'text-yellow-400 bg-yellow-400/20' 
+                      : 'text-white/40 hover:text-yellow-400 hover:bg-yellow-400/10'
+                  }`}
+                >
+                  <Star className={`w-8 h-8 ${star <= rating ? 'fill-current' : ''}`} />
+                </button>
+              ))}
+            </div>
+
+            {/* Feedback Input */}
+            <div className="mb-6">
+              <textarea
+                value={feedback}
+                onChange={(e) => setFeedback(e.target.value)}
+                placeholder="Share your experience with us..."
+                className="w-full bg-white/10 border border-white/20 rounded-xl p-4 text-white placeholder-white/40 focus:outline-none focus:border-accent transition-colors resize-none"
+                rows={4}
+              />
+            </div>
+
+            <button
+              onClick={handleSubmitFeedback}
+              className="w-full bg-gradient-to-r from-accent to-accent-bright text-white py-3 px-6 rounded-xl font-semibold hover:from-accent/90 hover:to-accent-bright/90 transition-all duration-200 transform hover:scale-105"
+            >
+              Submit Feedback
+            </button>
+          </motion.div>
+        )}
+
+        {/* Action Buttons */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.8 }}
+          className="flex flex-col sm:flex-row gap-4 justify-center"
+        >
+          <button className="flex items-center justify-center space-x-2 bg-white/10 hover:bg-white/20 text-white py-3 px-6 rounded-xl transition-all duration-200">
+            <Heart className="w-5 h-5" />
+            <span>Save to Favorites</span>
+          </button>
+          
+          <button className="flex items-center justify-center space-x-2 bg-white/10 hover:bg-white/20 text-white py-3 px-6 rounded-xl transition-all duration-200">
+            <MessageCircle className="w-5 h-5" />
+            <span>Contact Business</span>
+          </button>
+          
+          <button className="flex items-center justify-center space-x-2 bg-white/10 hover:bg-white/20 text-white py-3 px-6 rounded-xl transition-all duration-200">
+            <Share2 className="w-5 h-5" />
+            <span>Share</span>
+          </button>
+        </motion.div>
+      </div>
+    </div>
   )
 }
+
 

@@ -1,15 +1,49 @@
-<svg width="64" height="64" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#b8a595"/>
-      <stop offset="1" stop-color="#3c2415"/>
-    </linearGradient>
-  </defs>
-  <circle cx="256" cy="256" r="220" fill="#f5f3f0"/>
-  <g stroke="url(#g)" stroke-width="28" fill="none" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M160 256c0-80 56-144 128-144 32 0 64 16 88 40"/>
-    <path d="M160 256c0 80 56 144 128 144 32 0 64-16 88-40"/>
-    <path d="M224 176l64 80-64 80"/>
-  </g>
+<svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Bond Symbol - Two Elements Becoming One -->
+  <path
+    d="M5 8 L5 24 L12 24 C15 24 16 22 16 20 C16 19 15 18 15 18"
+    stroke="#3B82F6"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    fill="none"
+  />
+  <path
+    d="M5 12 L12 12 C13 12 15 13 15 14"
+    stroke="#3B82F6"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    fill="none"
+  />
+  <path
+    d="M17 14 C19 13 20 12 21 12 L27 12"
+    stroke="#3B82F6"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    fill="none"
+  />
+  <path
+    d="M17 18 C19 19 20 20 21 20 C24 20 25 22 25 24 L27 24"
+    stroke="#3B82F6"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    fill="none"
+  />
+  <circle
+    cx="16"
+    cy="16"
+    r="2"
+    fill="#3B82F6"
+  />
+  <path
+    d="M15 14 Q16 15 17 14 M15 18 Q16 17 17 18"
+    stroke="#3B82F6"
+    stroke-width="0.5"
+    fill="none"
+    stroke-linecap="round"
+    opacity="0.3"
+  />
 </svg>
-

@@ -98,11 +98,12 @@ export const createBusiness = async (business: Omit<Business, 'id' | 'created_at
       .select()
       .single()
     data = retry.data as any
-    error = retry.error as any
   }
   if (error) throw error
   return data as Business
 }
+
+
 
 export const uploadLogo = async (file: File, businessId: string) => {
   const fileExt = file.name.split('.').pop()
@@ -199,30 +200,72 @@ export const logVisitEvent = async (businessId: string, customerId: string, loca
 
 export const getStatsForUser = async (userId: string) => {
   const biz = await getBusinessByUserId(userId)
-  if (!biz) return { totalVisits: 0, totalRedemptions: 0 }
+  if (!biz) return { 
+    totalVisits: 0, 
+    totalCustomers: 0, 
+    averageRating: 4.5, 
+    monthlyGrowth: 0 
+  }
+  
   let totalVisits = 0
+  let totalCustomers = 0
+  
   try {
-    const { count, error } = await supabase
+    // Get total visits
+    const { count: visitCount, error: visitError } = await supabase
       .from('visit_events')
       .select('*', { count: 'exact', head: true })
       .eq('business_id', biz.id)
-    if (error) throw error
-    totalVisits = count ?? 0
-  } catch {
+    if (visitError) throw visitError
+    totalVisits = visitCount ?? 0
+    
+    // Get total customers
+    const { count: customerCount, error: customerError } = await supabase
+      .from('customers')
+      .select('*', { count: 'exact', head: true })
+      .eq('business_id', biz.id)
+    if (customerError) throw customerError
+    totalCustomers = customerCount ?? 0
+    
+  } catch (error) {
+    console.error('Error fetching stats:', error)
     // Fallback: sum customers.current_visits for this business
-    const { data, error } = await supabase
+    const { data, error: fallbackError } = await supabase
       .from('customers')
       .select('current_visits')
       .eq('business_id', biz.id)
-    if (!error && data) totalVisits = (data as any[]).reduce((s, r) => s + (r.current_visits || 0), 0)
+    if (!fallbackError && data) {
+      totalVisits = (data as any[]).reduce((s, r) => s + (r.current_visits || 0), 0)
+    }
   }
 
-  const { count: totalRedemptions, error: e2 } = await supabase
-    .from('redemptions')
-    .select('*', { count: 'exact', head: true })
-    .eq('business_id', biz.id)
-  if (e2) throw e2
-  return { totalVisits, totalRedemptions: totalRedemptions ?? 0 }
+  // Calculate monthly growth based on actual data
+  let monthlyGrowth = 0
+  try {
+    const thirtyDaysAgo = new Date()
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+    
+    const { count: recentVisits, error: recentError } = await supabase
+      .from('visit_events')
+      .select('*', { count: 'exact', head: true })
+      .eq('business_id', biz.id)
+      .gte('created_at', thirtyDaysAgo.toISOString())
+    
+    if (!recentError && recentVisits !== null) {
+      const previousMonthVisits = Math.max(0, totalVisits - recentVisits)
+      monthlyGrowth = previousMonthVisits > 0 ? Math.round(((recentVisits - previousMonthVisits) / previousMonthVisits) * 100) : 0
+    }
+  } catch (error) {
+    console.error('Error calculating monthly growth:', error)
+    monthlyGrowth = 0
+  }
+
+  return { 
+    totalVisits, 
+    totalCustomers, 
+    averageRating: 4.5, // Placeholder for MVP
+    monthlyGrowth 
+  }
 }
 
 export const getRecentActivity = async (userId: string, limit = 10) => {
@@ -269,25 +312,62 @@ export const upsertCustomerPhone = async (customerId: string, phone: string) => 
 
 export const getDailyVisitsForUser = async (userId: string, days = 14) => {
   const biz = await getBusinessByUserId(userId)
-  if (!biz) return [] as Array<{ d: string, c: number }>
+  if (!biz) return [] as Array<{ date: string, visits: number }>
+  
   const { data, error } = await supabase
     .from('visit_events')
     .select('created_at')
     .eq('business_id', biz.id)
     .gte('created_at', new Date(Date.now() - days*86400000).toISOString())
     .order('created_at', { ascending: true })
+  
   if (error) return []
+  
   const bucket = new Map<string, number>()
   for (const row of (data as any[])) {
     const d = (row.created_at as string).slice(0,10)
     bucket.set(d, (bucket.get(d) || 0) + 1)
   }
-  const out: Array<{ d: string, c: number }> = []
+  
+  const out: Array<{ date: string, visits: number }> = []
   for (let i = days - 1; i >= 0; i--) {
     const d = new Date(Date.now() - i*86400000).toISOString().slice(0,10)
-    out.push({ d, c: bucket.get(d) || 0 })
+    out.push({ date: d, visits: bucket.get(d) || 0 })
   }
+  
   return out
+}
+
+// Add function to get recent customers
+export const getRecentCustomers = async (userId: string, limit = 5) => {
+  const biz = await getBusinessByUserId(userId)
+  if (!biz) return []
+  
+  const { data, error } = await supabase
+    .from('customers')
+    .select('*')
+    .eq('business_id', biz.id)
+    .order('created_at', { ascending: false })
+    .limit(limit)
+  
+  if (error) return []
+  return data as Customer[]
+}
+
+// Add function to get recent check-ins
+export const getRecentCheckIns = async (userId: string, limit = 10) => {
+  const biz = await getBusinessByUserId(userId)
+  if (!biz) return []
+  
+  const { data, error } = await supabase
+    .from('visit_events')
+    .select('*')
+    .eq('business_id', biz.id)
+    .order('created_at', { ascending: false })
+    .limit(limit)
+  
+  if (error) return []
+  return data as VisitEvent[]
 }
 
 export const createReferral = async (businessId: string, referrerCustomerId: string, token: string) => {
@@ -367,4 +447,61 @@ export const getCustomerActivity = async (businessId: string, customerId: string
     .limit(limit)
   if (error) throw error
   return (data as Array<{ created_at: string, local_storage_id?: string | null }>)
+}
+
+
+
+// Development helper: Create test business
+export const createTestBusiness = async (userId: string) => {
+  const testBusiness = {
+    user_id: userId,
+    business_name: 'Test Coffee Shop',
+    brand_color: '#3B82F6',
+    loyalty_visits_required: 5
+  }
+  
+  const { data, error } = await supabase
+    .from('businesses')
+    .insert(testBusiness)
+    .select()
+    .single()
+    
+  if (error) throw error
+  return data as Business
+}
+
+// Development helper: Create test customer
+export const createTestCustomer = async (businessId: string) => {
+  const testCustomer = {
+    business_id: businessId,
+    local_storage_id: `test_${Date.now()}`,
+    current_visits: Math.floor(Math.random() * 5) + 1
+  }
+  
+  const { data, error } = await supabase
+    .from('customers')
+    .insert(testCustomer)
+    .select()
+    .single()
+    
+  if (error) throw error
+  return data as Customer
+}
+
+// Development helper: Create test visit event
+export const createTestVisitEvent = async (businessId: string, customerId: string) => {
+  const testVisit = {
+    business_id: businessId,
+    customer_id: customerId,
+    local_storage_id: `test_${Date.now()}`
+  }
+  
+  const { data, error } = await supabase
+    .from('visit_events')
+    .insert(testVisit)
+    .select()
+    .single()
+    
+  if (error) throw error
+  return data as VisitEvent
 }

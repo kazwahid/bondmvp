@@ -1,74 +1,207 @@
 'use client'
 
-import { Heart, Coffee, Users, Shield } from 'lucide-react'
+import { motion } from 'framer-motion'
+import Link from 'next/link'
+import { Logo } from '@/components/brand/Logo'
+import { Mail, MapPin, Phone } from 'lucide-react'
 
-export default function Footer() {
+export function Footer() {
+  const navigation = [
+    { name: 'Work', href: '#work' },
+    { name: 'Studio', href: '#about' },
+    { name: 'Contact', href: '#contact' }
+  ]
+
+  const social = [
+    { name: 'Instagram', href: 'https://instagram.com/bondstudio' },
+    { name: 'LinkedIn', href: 'https://linkedin.com/company/bondstudio' },
+    { name: 'Twitter', href: 'https://twitter.com/bondstudio' }
+  ]
+
+  const legal = [
+    { name: 'Privacy Policy', href: '/privacy' },
+    { name: 'Terms of Service', href: '/terms' },
+    { name: 'Imprint', href: '/imprint' }
+  ]
+
   return (
-    <footer className="relative mt-20 bg-gradient-to-br from-dark-950 to-dark-900 text-white">
-      <div className="absolute inset-0 bg-[radial-gradient(600px_200px_at_50%_0%,rgba(73,197,182,0.15),transparent)]" />
-      
-      <div className="relative max-w-6xl mx-auto px-6 py-16">
-        <div className="grid md:grid-cols-4 gap-8">
-          {/* Brand */}
-          <div className="md:col-span-2">
-            <div className="flex items-center gap-2 mb-4">
-              <img src="/brand/bond-logo.svg" className="h-8 w-8 brightness-0 invert" />
-              <span className="text-xl font-heading font-bold">Bond</span>
+    <footer className="bg-bg border-t border-border">
+      <div className="max-w-7xl mx-auto container-padding py-20">
+        {/* Contact Section - Inertia Style */}
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="mb-20"
+        >
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+            {/* Contact Info */}
+            <div>
+              <h2 className="text-4xl md:text-5xl font-bold mb-8 leading-tight">
+                Ready to discuss<br />
+                your next project?
+              </h2>
+              <p className="text-xl text-muted mb-8 font-light">
+                Let's create something unforgettable together.
+              </p>
+              
+              <div className="space-y-4 mb-8">
+                <div>
+                  <span className="text-sm uppercase tracking-wider text-muted block mb-1">Email</span>
+                  <a href="mailto:hello@bondstudio.com" className="text-lg hover:text-muted transition-colors">
+                    hello@bondstudio.com
+                  </a>
+                </div>
+                <div>
+                  <span className="text-sm uppercase tracking-wider text-muted block mb-1">Location</span>
+                  <span className="text-lg">Global • Remote First</span>
+                </div>
+              </div>
+
+              <Link
+                href="/auth"
+                className="inline-flex items-center px-8 py-4 bg-fg text-bg font-medium hover:bg-muted transition-all duration-300"
+              >
+                Start a Project
+                <span className="ml-2">→</span>
+              </Link>
             </div>
-            <p className="text-dark-300 mb-6 max-w-md">
-              Building meaningful connections between businesses and customers through beautiful loyalty experiences.
+
+            {/* Logo */}
+            <div className="flex justify-center lg:justify-end">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+              >
+                <Logo variant="light" size="lg" />
+              </motion.div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Footer Navigation */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-16"
+        >
+          {/* Navigation */}
+          <div>
+            <h3 className="text-sm uppercase tracking-wider text-muted mb-6">Navigation</h3>
+            <ul className="space-y-3">
+              {navigation.map((item) => (
+                <li key={item.name}>
+                  <Link
+                    href={item.href}
+                    className="text-fg hover:text-muted transition-colors duration-300"
+                  >
+                    {item.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Social */}
+          <div>
+            <h3 className="text-sm uppercase tracking-wider text-muted mb-6">Social</h3>
+            <ul className="space-y-3">
+              {social.map((item) => (
+                <li key={item.name}>
+                  <a
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-fg hover:text-muted transition-colors duration-300"
+                  >
+                    {item.name}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Legal */}
+          <div>
+            <h3 className="text-sm uppercase tracking-wider text-muted mb-6">Legal</h3>
+            <ul className="space-y-3">
+              {legal.map((item) => (
+                <li key={item.name}>
+                  <Link
+                    href={item.href}
+                    className="text-fg hover:text-muted transition-colors duration-300"
+                  >
+                    {item.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Additional Info */}
+          <div>
+            <h3 className="text-sm uppercase tracking-wider text-muted mb-6">Studio</h3>
+            <p className="text-muted text-sm leading-relaxed mb-4">
+              Building connections through thoughtful design and technology.
             </p>
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 text-accent-400">
-                <Heart className="h-4 w-4" />
-                <span className="text-sm">Made with love</span>
-              </div>
-              <div className="flex items-center gap-2 text-accent-400">
-                <Coffee className="h-4 w-4" />
-                <span className="text-sm">For coffee shops</span>
-              </div>
+            <div className="text-xs uppercase tracking-wider text-muted">
+              <div>EST. 2024</div>
+              <div>Berlin's Digital Studio</div>
             </div>
           </div>
+        </motion.div>
 
-          {/* Features */}
-          <div>
-            <h3 className="font-heading font-semibold mb-4">Features</h3>
-            <ul className="space-y-2 text-dark-300">
-              <li><a href="#" className="hover:text-primary-600 transition-colors">Live QR Codes</a></li>
-              <li><a href="#" className="hover:text-primary-600 transition-colors">Anti-fraud Protection</a></li>
-              <li><a href="#" className="hover:text-primary-600 transition-colors">Real-time Analytics</a></li>
-              <li><a href="#" className="hover:text-primary-600 transition-colors">Mobile-first Design</a></li>
-            </ul>
-          </div>
-
-          {/* Company */}
-          <div>
-            <h3 className="font-heading font-semibold mb-4">Company</h3>
-            <ul className="space-y-2 text-dark-300">
-              <li><a href="#" className="hover:text-primary-600 transition-colors">About</a></li>
-              <li><a href="#" className="hover:text-primary-600 transition-colors">Privacy</a></li>
-              <li><a href="#" className="hover:text-primary-600 transition-colors">Terms</a></li>
-              <li><a href="#" className="hover:text-primary-600 transition-colors">Support</a></li>
-            </ul>
-          </div>
-        </div>
-
-        {/* Bottom */}
-        <div className="border-t border-dark-700 mt-12 pt-8 flex flex-col md:flex-row items-center justify-between">
-          <p className="text-dark-400 text-sm">
-            © 2024 Bond. All rights reserved.
-          </p>
-          <div className="flex items-center gap-6 mt-4 md:mt-0">
-            <div className="flex items-center gap-2 text-dark-400">
-              <Users className="h-4 w-4" />
-              <span className="text-sm">Trusted by 1000+ businesses</span>
+        {/* Bottom Bar */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="pt-8 border-t border-border"
+        >
+          <div className="flex flex-col md:flex-row justify-between items-center text-sm text-muted mb-8">
+            <div className="flex items-center space-x-6 mb-4 md:mb-0">
+              <span>© {new Date().getFullYear()} Bond Studio</span>
+              <span>All rights reserved</span>
             </div>
-            <div className="flex items-center gap-2 text-dark-400">
-              <Shield className="h-4 w-4" />
-              <span className="text-sm">Enterprise secure</span>
+            <div className="text-xs uppercase tracking-wider">
+              Made with precision in Berlin
             </div>
           </div>
-        </div>
+        </motion.div>
+
+        {/* Lumus-inspired scrolling ticker */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, delay: 0.6 }}
+          className="overflow-hidden py-4 border-t border-border"
+        >
+          <motion.div
+            className="flex whitespace-nowrap"
+            animate={{ x: [0, -1000] }}
+            transition={{
+              duration: 25,
+              repeat: Infinity,
+              ease: 'linear',
+            }}
+          >
+            {[...Array(10)].map((_, i) => (
+              <span
+                key={i}
+                className="text-lg font-bold text-fg/20 mr-16 uppercase tracking-wider"
+              >
+                CONNECTION STATT KOMPLEXITÄT - BUILD TRUST GROW CONNECTIONS - AUTHENTIC RELATIONSHIPS -
+              </span>
+            ))}
+          </motion.div>
+        </motion.div>
       </div>
     </footer>
   )
