@@ -244,7 +244,7 @@ export default function MinimalHero() {
               transition={{ delay: 1.2, duration: 0.8 }}
               className="text-xl md:text-2xl text-muted max-w-3xl mx-auto font-light font-sans mb-20 leading-relaxed"
             >
-              BondStudio©
+              BondStudio
             </motion.p>
 
             {/* CTA Buttons - Perfectly Spaced */}

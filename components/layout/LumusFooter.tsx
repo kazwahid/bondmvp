@@ -17,9 +17,9 @@ export function LumusFooter() {
   ]
 
   const social = [
-    { name: 'LinkedIn', href: 'https://linkedin.com/company/bondstudio' },
+    { name: 'LinkedIn', href: 'https://linkedin.com/in/qaziwahid' },
     { name: 'Twitter', href: 'https://twitter.com/bondstudio' },
-    { name: 'Instagram', href: 'https://instagram.com/bondstudio' }
+    { name: 'Instagram', href: 'https://instagram.com/qaziwahid' }
   ]
 
   const legal = [
@@ -82,32 +82,34 @@ export function LumusFooter() {
             <div>
               <h2 className="text-4xl md:text-5xl font-bold mb-8 leading-tight font-display uppercase text-fg">
                 Bond<br />
-                Studio.
+                Studio™
               </h2>
               <p className="text-xl text-muted mb-8 font-light font-sans">
-                connectivity over complexity
+                 Connectivity over complexity. 
               </p>
               
               <div className="space-y-4 mb-8">
                 <div>
                   <span className="text-sm uppercase tracking-wider text-muted block mb-1 font-ui">Email</span>
-                  <a href="mailto:hello@bondstudio.com" className="text-lg hover:text-accent transition-colors font-sans">
+                  <a href="mailto:qwahid@outlook.com" className="text-lg hover:text-accent transition-colors font-sans">
                     hello@bondstudio.com
                   </a>
                 </div>
                 <div>
                   <span className="text-sm uppercase tracking-wider text-muted block mb-1 font-ui">Phone</span>
-                  <a href="tel:+491573614825" className="text-lg hover:text-accent transition-colors font-sans">
+                  <a href="tel:+923363706365" className="text-lg hover:text-accent transition-colors font-sans">
                     +49 157 361 482 85
                   </a>
                 </div>
               </div>
 
               <Link
-                href="#contact"
+                href="https://instagram.com/qaziwahid"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="btn-accent inline-flex items-center group"
               >
-                <span>Schedule Consultation</span>
+                <span>DM US ON INSTAGRAM</span>
                 <motion.span 
                   className="ml-2 hover-arrow"
                   initial={{ x: 0 }}
@@ -190,7 +192,7 @@ export function LumusFooter() {
             <h4 className="text-sm uppercase tracking-wider text-muted mb-4 font-ui">Contact</h4>
             <div className="space-y-3">
               <div>
-                <a href="mailto:hello@bondstudio.com" className="text-fg hover:text-accent transition-colors font-sans">
+                <a href="mailto:qwahid@outlook.com" className="text-fg hover:text-accent transition-colors font-sans">
                   hello@bondstudio.com
                 </a>
               </div>
@@ -198,7 +200,7 @@ export function LumusFooter() {
           </div>
         </motion.div>
 
-        {/* Bottom Bar with Live Time */}
+        {/* Bottom Bar with Live Time and Trademark */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -208,7 +210,7 @@ export function LumusFooter() {
         >
           <div className="flex flex-col md:flex-row justify-between items-center text-sm text-muted">
             <div className="flex items-center space-x-6 mb-4 md:mb-0">
-              <span className="font-sans"> © 2025 BOND STUDIO. PTY LTD</span>
+              <span className="font-sans"> © 2025 BOND STUDIO PTY LTD</span>
               <span className="hidden md:block text-accent/60">•</span>
               <span className="font-mono text-xs">
                 {currentTime}
@@ -227,7 +229,8 @@ export function LumusFooter() {
             </div>
           </div>
         </motion.div>
-
+        
+           
         {/* Logo */}
         <div className="flex justify-center lg:justify-center">
               <motion.div
@@ -238,6 +241,12 @@ export function LumusFooter() {
               >
                 <Logo variant="light" size="lg" showText={false} />
               </motion.div>
+              </div>
+                 {/* Trademark Notice */}
+              <div className="mt-4 text-center">
+            <p className="text-xs text-muted/80 font-sans leading-relaxed max-w-4xl mx-auto">
+              BondStudio, BondStudio Vision, and the BondStudio™ logo are all trademarks of BondStudio PTY LTD. All rights reserved.
+            </p>
             </div>
             </div>
     </footer>

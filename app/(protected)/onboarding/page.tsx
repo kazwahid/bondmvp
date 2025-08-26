@@ -6,7 +6,6 @@ import ProtectedPage from '@/components/auth/ProtectedPage'
 import { useAuth } from '@/hooks/useAuth'
 import { useState } from 'react'
 import { createBusiness, updateBusiness, uploadLogoForUser } from '@/lib/supabase'
-import { slugify, randomSuffix } from '@/utils/slug'
 import { motion } from 'framer-motion'
 import { LogOut, ArrowRight, ArrowLeft, Upload, Palette, Target, CheckCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
@@ -21,6 +20,8 @@ export default function OnboardingPage() {
   const [logoFile, setLogoFile] = useState<File | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [velocityMinutes, setVelocityMinutes] = useState(5)
+  const [success, setSuccess] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const next = () => setStep((s) => Math.min(3, s + 1))
   const prev = () => setStep((s) => Math.max(1, s - 1))
@@ -37,45 +38,57 @@ export default function OnboardingPage() {
   const handleSubmit = async () => {
     if (!user) return
     setSubmitting(true)
+    
     try {
-      // First create the business row (with slug), retry on slug conflicts
-      const base = slugify(businessName || 'my-business')
-      let newBiz: any = null
-      let attempts = 0
-      let lastErr: any = null
-      while (!newBiz && attempts < 3) {
-        const candidate = `${base}-${randomSuffix(4)}`
-        try {
-          const visitsNormalized = Math.max(1, Number.isFinite(visits as any) ? Math.round(visits as any) : 1)
-          newBiz = await createBusiness({
-            user_id: user.id,
-            business_name: businessName || 'My Business',
-            slug: candidate,
-            logo_url: null,
-            brand_color: brandColor,
-            loyalty_visits_required: visitsNormalized,
-          } as any)
-        } catch (e: any) {
-          lastErr = e
-          // Unique violation on slug – try another
-          if (e?.code === '23505' || (e?.message || '').toLowerCase().includes('duplicate key') ) {
-            attempts++
-            continue
-          }
-          throw e
-        }
+      console.log('Starting business creation for user:', user.id)
+      
+      // Validate required fields
+      if (!businessName.trim()) {
+        throw new Error('Business name is required')
       }
-      if (!newBiz) throw lastErr || new Error('Unable to create business')
+      
+      // Create the business
+      console.log('Creating business...')
+      
+      const visitsNormalized = Math.max(1, Number.isFinite(visits as any) ? Math.round(visits as any) : 1)
+      const newBiz = await createBusiness({
+        user_id: user.id,
+        business_name: businessName.trim(),
+        logo_url: null,
+        brand_color: brandColor,
+        loyalty_visits_required: visitsNormalized,
+        velocity_minutes: velocityMinutes,
+      } as any)
+      
+      console.log('Business created successfully:', newBiz)
 
       // Upload logo if provided and patch business
       if (logoFile) {
-        const publicUrl = await uploadLogoForUser(logoFile, user.id)
-        await updateBusiness(newBiz.id, { logo_url: publicUrl })
+        try {
+          console.log('Uploading logo...')
+          const publicUrl = await uploadLogoForUser(logoFile, user.id)
+          console.log('Logo uploaded successfully:', publicUrl)
+          
+          await updateBusiness(newBiz.id, { logo_url: publicUrl })
+          console.log('Business updated with logo')
+        } catch (logoError) {
+          console.error('Logo upload failed:', logoError)
+          // Don't fail the onboarding if logo upload fails
+        }
       }
 
-      window.location.href = '/dashboard'
+      console.log('Onboarding completed successfully')
+      setSuccess(true)
+      
+      // Redirect to dashboard after a brief success message
+      setTimeout(() => {
+        router.push('/dashboard')
+      }, 2000)
+      
     } catch (e) {
-      alert('Failed to save onboarding. Please try again.')
+      console.error('Onboarding failed:', e)
+      const errorMessage = e instanceof Error ? e.message : 'Unknown error occurred'
+      setError(errorMessage)
     } finally {
       setSubmitting(false)
     }

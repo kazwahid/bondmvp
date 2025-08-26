@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import { getBusinessByUserId, mintQrToken } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import LoadingSpinner from '@/components/ui/LoadingSpinner'
+import { BrandIdentity } from '@/components/brand/BrandIdentity'
 import QRCode from 'qrcode'
 import { 
   QrCode, 
@@ -196,15 +197,7 @@ export default function QRPage() {
               </button>
               <div className="relative group">
                 <div className="w-16 h-16 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 rounded-3xl flex items-center justify-center shadow-2xl transform group-hover:scale-110 transition-all duration-500 overflow-hidden">
-                  {business?.logo_url ? (
-                    <img 
-                      src={business.logo_url} 
-                      alt={`${business?.business_name || 'Business'} logo`}
-                      className="w-full h-full object-cover rounded-3xl"
-                    />
-                  ) : (
-                    <QrCode className="w-8 h-8 text-white" />
-                  )}
+                  <BrandIdentity size="sm" variant="light" showTagline={false} />
                 </div>
                 {/* Enhanced animated glow effect */}
                 <div className="absolute -inset-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-3xl blur-xl opacity-0 group-hover:opacity-30 transition-opacity duration-500"></div>

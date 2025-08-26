@@ -12,7 +12,6 @@ export interface Business {
   id: string
   user_id: string
   business_name: string
-  slug?: string | null
   logo_url: string | null
   brand_color: string
   loyalty_visits_required: number
@@ -61,16 +60,7 @@ export const getBusiness = async (businessId: string) => {
   return (data as Business) || null
 }
 
-export const getBusinessBySlug = async (slug: string) => {
-  const { data, error } = await supabase
-    .from('businesses')
-    .select('*')
-    .eq('slug', slug)
-    .maybeSingle()
-  if (error) throw error
-  return (data as Business) || null
 
-}
 
 
 export const getBusinessByUserId = async (userId: string) => {
@@ -84,21 +74,12 @@ export const getBusinessByUserId = async (userId: string) => {
 }
 
 export const createBusiness = async (business: Omit<Business, 'id' | 'created_at'>) => {
-  // Try insert; if the project DB does not have a slug column, retry without it
-  let { data, error } = await supabase
+  const { data, error } = await supabase
     .from('businesses')
     .insert(business)
     .select()
     .single()
-  if (error && (error.code === '42703' || (error.message || '').toLowerCase().includes('slug'))) {
-    const { slug, ...rest } = business as any
-    const retry = await supabase
-      .from('businesses')
-      .insert(rest)
-      .select()
-      .single()
-    data = retry.data as any
-  }
+    
   if (error) throw error
   return data as Business
 }
@@ -451,57 +432,8 @@ export const getCustomerActivity = async (businessId: string, customerId: string
 
 
 
-// Development helper: Create test business
-export const createTestBusiness = async (userId: string) => {
-  const testBusiness = {
-    user_id: userId,
-    business_name: 'Test Coffee Shop',
-    brand_color: '#3B82F6',
-    loyalty_visits_required: 5
-  }
-  
-  const { data, error } = await supabase
-    .from('businesses')
-    .insert(testBusiness)
-    .select()
-    .single()
-    
-  if (error) throw error
-  return data as Business
-}
 
-// Development helper: Create test customer
-export const createTestCustomer = async (businessId: string) => {
-  const testCustomer = {
-    business_id: businessId,
-    local_storage_id: `test_${Date.now()}`,
-    current_visits: Math.floor(Math.random() * 5) + 1
-  }
-  
-  const { data, error } = await supabase
-    .from('customers')
-    .insert(testCustomer)
-    .select()
-    .single()
-    
-  if (error) throw error
-  return data as Customer
-}
 
-// Development helper: Create test visit event
-export const createTestVisitEvent = async (businessId: string, customerId: string) => {
-  const testVisit = {
-    business_id: businessId,
-    customer_id: customerId,
-    local_storage_id: `test_${Date.now()}`
-  }
-  
-  const { data, error } = await supabase
-    .from('visit_events')
-    .insert(testVisit)
-    .select()
-    .single()
-    
-  if (error) throw error
-  return data as VisitEvent
-}
+
+
+

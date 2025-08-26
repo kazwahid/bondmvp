@@ -1,8 +1,8 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { motion, useInView } from 'framer-motion'
-import { ChevronDown, TrendingUp, Users, Star, Award } from 'lucide-react'
+import { motion, useInView, useMotionValue, useTransform, useSpring } from 'framer-motion'
+import { ChevronDown, TrendingUp, Users, Award, Sparkles, Zap, Target, ArrowRight } from 'lucide-react'
 
 interface Metric {
   id: string
@@ -12,6 +12,8 @@ interface Metric {
   description: string
   icon: React.ReactNode
   details: string[]
+  color: string
+  gradient: string
 }
 
 const metrics: Metric[] = [
@@ -21,12 +23,14 @@ const metrics: Metric[] = [
     value: 94,
     suffix: '%',
     description: 'Average customer retention rate across all programs',
-    icon: <TrendingUp className="h-6 w-6" />,
+    icon: <TrendingUp className="h-8 w-8" />,
     details: [
       'Year-over-year improvement of 17%',
       'Industry benchmark: 67%',
       'Automated re-engagement campaigns'
-    ]
+    ],
+    color: 'from-emerald-400 to-teal-500',
+    gradient: 'bg-gradient-to-br from-emerald-400/20 to-teal-500/20'
   },
   {
     id: 'engagement',
@@ -34,26 +38,14 @@ const metrics: Metric[] = [
     value: 87,
     suffix: '%',
     description: 'Active user engagement within loyalty programs',
-    icon: <Users className="h-6 w-6" />,
+    icon: <Users className="h-8 w-8" />,
     details: [
       'Daily active users increased by 22%',
       'Gamification elements boost participation',
       'Personalized reward recommendations'
-    ]
-  },
-  {
-    id: 'satisfaction',
-    title: 'Customer Satisfaction',
-    value: 4.9,
-    suffix: '/5',
-    description: 'Average customer satisfaction score',
-    icon: <Star className="h-6 w-6" />,
-    details: [
-      'Continuous feedback integration',
-      '48% would recommend to others',
-      '24/7 customer support response',
-      
-    ]
+    ],
+    color: 'from-blue-400 to-indigo-500',
+    gradient: 'bg-gradient-to-br from-blue-400/20 to-indigo-500/20'
   },
   {
     id: 'growth',
@@ -61,20 +53,30 @@ const metrics: Metric[] = [
     value: 106,
     suffix: '%',
     description: 'Average revenue growth for clients',
-    icon: <Award className="h-6 w-6" />,
+    icon: <Award className="h-8 w-8" />,
     details: [
       'Cross-selling opportunities increased',
       'Customer lifetime value improved',
       'Referral program success rate'
-    ]
+    ],
+    color: 'from-purple-400 to-pink-500',
+    gradient: 'bg-gradient-to-br from-purple-400/20 to-pink-500/20'
   }
 ]
 
 export default function MetricsSection() {
   const [openAccordion, setOpenAccordion] = useState<string | null>(null)
   const [animatedNumbers, setAnimatedNumbers] = useState<{ [key: string]: number }>({})
+  const [hoveredMetric, setHoveredMetric] = useState<string | null>(null)
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, amount: 0.3 })
+
+  // Mouse tracking for interactive effects
+  const mouseX = useMotionValue(0)
+  const mouseY = useMotionValue(0)
+  const springConfig = { damping: 25, stiffness: 700 }
+  const rotateX = useSpring(useTransform(mouseY, [-300, 300], [15, -15]), springConfig)
+  const rotateY = useSpring(useTransform(mouseX, [-300, 300], [-15, 15]), springConfig)
 
   useEffect(() => {
     if (isInView) {
@@ -112,10 +114,106 @@ export default function MetricsSection() {
     setOpenAccordion(openAccordion === id ? null : id)
   }
 
+  const handleMouseMove = (e: React.MouseEvent) => {
+    const rect = e.currentTarget.getBoundingClientRect()
+    const centerX = rect.left + rect.width / 2
+    const centerY = rect.top + rect.height / 2
+    mouseX.set(e.clientX - centerX)
+    mouseY.set(e.clientY - centerY)
+  }
+
+  const handleMouseLeave = () => {
+    mouseX.set(0)
+    mouseY.set(0)
+  }
+
   return (
-    <section ref={ref} className="section-padding bg-surface">
-      <div className="max-w-7xl mx-auto container-padding">
-        {/* Section Header */}
+    <section 
+      ref={ref} 
+      className="section-padding bg-gradient-to-br from-bg via-surface/50 to-bg relative overflow-hidden"
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+    >
+      {/* Interactive Background Elements */}
+      <div className="absolute inset-0">
+        {/* Floating geometric shapes */}
+        <motion.div
+          className="absolute top-20 left-20 w-72 h-72 border border-accent/10 rounded-full"
+          animate={{
+            rotate: 360,
+            scale: [1, 1.1, 1],
+            opacity: [0.05, 0.15, 0.05],
+          }}
+          transition={{
+            rotate: { duration: 30, repeat: Infinity, ease: "linear" },
+            scale: { duration: 8, repeat: Infinity, ease: "easeInOut" },
+            opacity: { duration: 6, repeat: Infinity, ease: "easeInOut" }
+          }}
+        />
+        
+        <motion.div
+          className="absolute bottom-20 right-20 w-96 h-96 border border-accent/8 rounded-full"
+          animate={{
+            rotate: -360,
+            scale: [1, 0.9, 1],
+            opacity: [0.03, 0.12, 0.03],
+          }}
+          transition={{
+            rotate: { duration: 25, repeat: Infinity, ease: "linear" },
+            scale: { duration: 7, repeat: Infinity, ease: "easeInOut" },
+            opacity: { duration: 5, repeat: Infinity, ease: "easeInOut" }
+          }}
+        />
+
+        {/* Floating particles */}
+        <div className="absolute inset-0">
+          {Array.from({ length: 50 }).map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-1 h-1 bg-accent/30 rounded-full"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+              }}
+              animate={{
+                y: [0, -100, 0],
+                x: [0, Math.random() * 100 - 50, 0],
+                opacity: [0, 1, 0],
+                scale: [0, 1.5, 0],
+              }}
+              transition={{
+                duration: 4 + Math.random() * 3,
+                repeat: Infinity,
+                delay: Math.random() * 5,
+                ease: "easeInOut"
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Gradient orbs */}
+        <motion.div
+          className="absolute w-[800px] h-[800px] bg-gradient-radial from-accent/8 via-accent/4 to-transparent rounded-full blur-3xl"
+          animate={{
+            x: [0, 100, 0],
+            y: [0, -50, 0],
+            scale: [1, 1.2, 1],
+            opacity: [0.05, 0.15, 0.05],
+          }}
+          transition={{
+            duration: 12,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+          style={{
+            left: '10%',
+            top: '20%'
+          }}
+        />
+      </div>
+
+      <div className="max-w-7xl mx-auto container-padding relative z-10">
+        {/* Section Header with Interactive Elements */}
         <motion.div
           initial={{ opacity: 0, y: 60 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -123,16 +221,43 @@ export default function MetricsSection() {
           transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
           className="text-center mb-20"
         >
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-8 font-display uppercase text-fg">
+          {/* Floating badge */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="inline-flex items-center space-x-3 bg-gradient-to-r from-accent/20 to-orange-400/20 px-6 py-3 rounded-full border border-accent/30 mb-6 backdrop-blur-sm"
+            whileHover={{ scale: 1.05, y: -2 }}
+          >
+           
+            <span className="text-accent font-medium text-sm uppercase tracking-wider">Why Choose Us?</span>
+            <Zap className="h-5 w-5 text-orange-400" />
+          </motion.div>
+          
+          <motion.h2 
+            className="text-4xl md:text-5xl lg:text-6xl font-bold mb-8 font-display uppercase text-fg"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1, delay: 0.3 }}
+          >
             Expected Numbers
-          </h2>
-          <p className="text-xl text-muted max-w-3xl mx-auto font-sans">
-            Predicted results from real businesses on our model
-          </p>
+          </motion.h2>
+          
+          <motion.p 
+            className="text-xl text-muted max-w-3xl mx-auto font-sans leading-relaxed"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+          >
+            Predicted results from real businesses using our proven model
+          </motion.p>
         </motion.div>
 
-        {/* Enhanced Metrics Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+        {/* Modern Interactive Metrics Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
           {metrics.map((metric, index) => (
             <motion.div
               key={metric.id}
@@ -234,7 +359,7 @@ export default function MetricsSection() {
             Ready to see these results?
           </h3>
           <motion.a
-            href="#contact"
+            href="/auth?mode=signup"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="btn-accent inline-flex items-center"

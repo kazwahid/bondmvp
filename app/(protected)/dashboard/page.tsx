@@ -6,12 +6,12 @@ import {
   getDailyVisitsForUser,
   getBusinessByUserId,
   getRecentCustomers,
-  getRecentCheckIns,
-  createTestBusiness
+  getRecentCheckIns
 } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/components/auth/AuthProvider'
 import LoadingSpinner from '@/components/ui/LoadingSpinner'
+import { BrandIdentity } from '@/components/brand/BrandIdentity'
 import { 
   Activity, 
   Users, 
@@ -106,19 +106,22 @@ export default function Dashboard() {
 
         console.log('Fetching dashboard data for user:', user.id)
 
-        // First, try to get or create a business
+        // First, try to get the user's business
         let businessData = await getBusinessByUserId(user.id)
         console.log('Business data:', businessData)
         
         if (!businessData) {
-          console.log('No business found, creating test business...')
-          // Create a test business if none exists
-          businessData = await createTestBusiness(user.id)
-          console.log('Test business created:', businessData)
+          console.log('No business found, redirecting to onboarding...')
+          // Redirect to onboarding instead of creating test business
+          router.push('/onboarding')
+          return
         }
         
-        if (!businessData) {
-          throw new Error('Failed to create or retrieve business data')
+        // Check if business has required fields set
+        if (!businessData.business_name || businessData.business_name === 'Test Coffee Shop') {
+          console.log('Business setup incomplete, redirecting to onboarding...')
+          router.push('/onboarding')
+          return
         }
         
         setBusiness(businessData)
@@ -267,15 +270,7 @@ export default function Dashboard() {
             <div className="flex items-center space-x-6">
               <div className="relative group">
                 <div className="w-16 h-16 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 rounded-3xl flex items-center justify-center shadow-2xl transform group-hover:scale-110 transition-all duration-500 overflow-hidden">
-                  {business?.logo_url ? (
-                    <img 
-                      src={business.logo_url} 
-                      alt={`${business.business_name} logo`}
-                      className="w-full h-full object-cover rounded-3xl"
-                    />
-                  ) : (
-                    <Coffee className="w-8 h-8 text-white" />
-                  )}
+                  <BrandIdentity size="sm" variant="light" showTagline={false} />
                 </div>
                 {/* Enhanced animated glow effect */}
                 <div className="absolute -inset-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-3xl blur-xl opacity-0 group-hover:opacity-30 transition-opacity duration-500"></div>
@@ -283,7 +278,7 @@ export default function Dashboard() {
               </div>
               <div className="space-y-1">
                 <h1 className="text-4xl font-bold text-white tracking-tight bg-gradient-to-r from-white to-slate-200 bg-clip-text text-transparent">Dashboard</h1>
-                <p className="text-slate-400 text-xl font-medium">Welcome back, {business?.business_name || 'Coffee Shop Owner'}</p>
+                <p className="text-slate-400 text-xl font-medium">Welcome back, {business?.business_name || 'Business Owner'}</p>
               </div>
             </div>
 

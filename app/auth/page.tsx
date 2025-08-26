@@ -324,13 +324,13 @@ export default function AuthPage() {
                 <CheckCircle className="w-10 h-10 text-white" />
               </div>
               <div className="space-y-3">
-                <h3 className="text-2xl font-bold text-white">Check Your Email!</h3>
+                <h3 className="text-2xl font-bold text-white">Welcome to BondStudio! 🎉</h3>
                 <p className="text-muted text-lg leading-relaxed max-w-md mx-auto">
                   We've sent a confirmation link to <span className="text-white font-semibold">{formData.email}</span>. 
                   Please check your inbox and click the link to verify your account.
                 </p>
                 <p className="text-muted text-sm">
-                  Once confirmed, you can sign in and complete your business setup.
+                  Once confirmed, you can sign in and start building your business connections.
                 </p>
               </div>
               <div className="space-y-3">
@@ -340,15 +340,23 @@ export default function AuthPage() {
                 >
                   Go to Sign In
                 </button>
-                <p className="text-muted text-sm">
-                  Didn't receive the email? Check your spam folder or{' '}
-                  <button
-                    onClick={() => setMode('signup')}
-                    className="text-accent hover:text-accent-bright underline"
-                  >
-                    try signing up again
-                  </button>
-                </p>
+                <div className="space-y-2">
+                  <p className="text-muted text-sm">
+                    Didn't receive the email? Check your spam folder or{' '}
+                    <button
+                      onClick={() => setMode('signup')}
+                      className="text-accent hover:text-accent-bright underline"
+                    >
+                      try signing up again
+                    </button>
+                  </p>
+                  <p className="text-xs text-muted/60">
+                    Having trouble? Contact us at{' '}
+                    <a href="mailto:hello@bondstudio.com" className="text-accent hover:text-accent-bright underline">
+                      hello@bondstudio.com
+                    </a>
+                  </p>
+                </div>
               </div>
             </motion.div>
           )}

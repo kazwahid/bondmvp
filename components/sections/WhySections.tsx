@@ -69,7 +69,7 @@ export function WhyWeExist() {
                 transition={{ duration: 0.8, delay: 0.2 }}
                 className="text-xl text-muted leading-relaxed font-sans"
               >
-                BondStudio© is a digital marketing and development studio focused on building brands that bond with the senses. We care about people and work with people that works.
+                BondStudio is a digital marketing and development studio focused on building brands that bond with the senses. We care about people and work with people that works.
               </motion.p>
 
               <motion.p

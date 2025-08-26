@@ -53,7 +53,7 @@ export function Header() {
     { name: 'About', href: '#about' },
     { name: 'Studio', href: '#studio' },
     { name: 'Insights', href: '#insights' },
-    { name: 'Contact', href: '/contact' }
+    { name: 'Contact', href: '#contact' }
   ]
 
   return (
@@ -102,13 +102,13 @@ export function Header() {
               transition={{ delay: 0.4, duration: 0.6 }}
             >
               <Link
-                href="/dashboard"
+                href="/auth?mode=signup"
                 className={`btn-contact-minimal group relative transition-colors duration-500 ${
                   isLightBackground ? 'text-gray-900' : 'text-white'
                 }`}
               >
                 <span className="relative z-10 flex items-center text-sm font-medium tracking-wider">
-                  Your Business
+                  Start Your Project
                   <BarChart3 className="ml-2 w-4 h-4" />
                   <motion.div 
                     className="ml-2 w-1 h-1 bg-accent rounded-full" 
