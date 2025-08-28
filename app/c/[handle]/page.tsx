@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import { motion } from 'framer-motion'
+
 import { 
   CheckCircle, 
   Star, 
@@ -10,20 +11,19 @@ import {
   MessageCircle, 
   Share2,
   ArrowRight,
-  Clock,
-  MapPin,
-  Phone,
-  Globe
+  Target,
+  Coffee
 } from 'lucide-react'
 
+import { supabase } from '@/lib/supabase'
+
 interface Business {
-  name: string
-  industry: string
-  location: string
-  phone: string
-  website: string
-  description: string
-  logo?: string
+  id: string
+  business_name: string
+  brand_color: string
+  loyalty_visits_required: number
+  logo_url?: string | null
+  customer_instructions?: string | null
 }
 
 export default function CustomerPage() {
@@ -35,31 +35,85 @@ export default function CustomerPage() {
   const [feedback, setFeedback] = useState('')
 
   useEffect(() => {
-    // Simulate fetching business data based on handle
+    // Fetch real business data from the database
     const fetchBusiness = async () => {
       try {
         setLoading(true)
-        // In a real app, this would fetch from your API
-        const mockBusiness: Business = {
-          name: "Bond Studio",
-          industry: "Creative Agency",
-          location: "San Francisco, CA",
-          phone: "+1 (555) 123-4567",
-          website: "www.bondstudio.com",
-          description: "We craft memorable experiences that build lasting connections and inspire loyalty."
+        
+        // Get the business handle from the URL
+        const handle = params.handle as string
+        
+        console.log('Fetching business with handle:', handle)
+        
+        // For now, we'll use a simple approach - you might want to add a handle column to businesses table
+        // This is a temporary solution - in production you'd want a proper handle system
+        
+        // Try to fetch by ID first (if handle is a UUID)
+        let { data, error } = await supabase
+          .from('businesses')
+          .select('*')
+          .eq('id', handle)
+          .single()
+        
+        // If that fails, try to find by business name (temporary solution)
+        if (error && !handle.includes('-')) {
+          console.log('Trying to find by business name...')
+          const { data: nameData, error: nameError } = await supabase
+            .from('businesses')
+            .select('*')
+            .ilike('business_name', `%${handle}%`)
+            .single()
+          
+          if (!nameError) {
+            data = nameData
+            error = null
+            console.log('Found business by name:', data)
+          }
         }
         
-        setTimeout(() => {
+        // If still no data, try to get the first business (for testing purposes)
+        if (error || !data) {
+          console.log('Trying to get first business from database...')
+          const { data: firstBusiness, error: firstError } = await supabase
+            .from('businesses')
+            .select('*')
+            .limit(1)
+            .single()
+          
+          if (!firstError && firstBusiness) {
+            data = firstBusiness
+            error = null
+            console.log('Found first business:', data)
+          }
+        }
+        
+        if (error || !data) {
+          console.error('Error fetching business:', error)
+          // Fallback to mock data if database fetch fails
+          const mockBusiness: Business = {
+            id: "mock-id",
+            business_name: "Bond Studio Coffee",
+            brand_color: "#3B82F6",
+            loyalty_visits_required: 5,
+            logo_url: null,
+            customer_instructions: "Welcome to Bond Studio Coffee! 🎉\n\nCheck in to earn points towards your next free coffee. We appreciate your loyalty and can't wait to serve you!\n\n• Earn 1 point per visit\n• Get a free coffee after 5 visits\n• Points never expire"
+          }
           setBusiness(mockBusiness)
-          setLoading(false)
-        }, 1000)
+        } else {
+          console.log('Fetched business data:', data)
+          setBusiness(data as Business)
+        }
+        
+        setLoading(false)
       } catch (error) {
         console.error('Error fetching business:', error)
         setLoading(false)
       }
     }
 
-    fetchBusiness()
+    if (params.handle) {
+      fetchBusiness()
+    }
   }, [params.handle])
 
   const handleCheckIn = () => {
@@ -111,11 +165,35 @@ export default function CustomerPage() {
           transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
-          <div className="w-20 h-20 bg-gradient-to-br from-accent to-accent-bright rounded-2xl flex items-center justify-center mx-auto mb-6">
-            <span className="text-white font-bold text-3xl">B</span>
-          </div>
-          <h1 className="text-4xl font-bold text-white mb-4">{business.name}</h1>
-          <p className="text-xl text-white/60 max-w-2xl mx-auto">{business.description}</p>
+          {business.logo_url ? (
+            <img 
+              src={business.logo_url} 
+              alt={`${business.business_name} logo`}
+              className="w-20 h-20 rounded-2xl mx-auto mb-6 object-cover border-2 border-white/20"
+            />
+          ) : (
+            <div 
+              className="w-20 h-20 rounded-2xl mx-auto mb-6 flex items-center justify-center text-white font-bold text-3xl"
+              style={{ backgroundColor: business.brand_color }}
+            >
+              {business.business_name.charAt(0)}
+            </div>
+          )}
+          <h1 className="text-4xl font-bold text-white mb-4">{business.business_name}</h1>
+          {business.customer_instructions ? (
+            <div className="max-w-2xl mx-auto">
+              <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6 text-left">
+                <h3 className="text-lg font-semibold text-white mb-3">Welcome Message</h3>
+                <div className="text-white/80 whitespace-pre-line leading-relaxed">
+                  {business.customer_instructions}
+                </div>
+              </div>
+            </div>
+          ) : (
+            <p className="text-xl text-white/60 max-w-2xl mx-auto">
+              Welcome! Check in to earn loyalty points.
+            </p>
+          )}
         </motion.div>
 
         {/* Check-in Section */}
@@ -147,47 +225,46 @@ export default function CustomerPage() {
           >
             <CheckCircle className="w-16 h-16 text-green-400 mx-auto mb-4" />
             <h2 className="text-2xl font-semibold text-white mb-2">Successfully Checked In!</h2>
-            <p className="text-white/80">Thank you for visiting {business.name}</p>
+            <p className="text-white/80">Thank you for visiting {business.business_name}</p>
           </motion.div>
         )}
 
-        {/* Business Information */}
+        {/* Loyalty Program Information */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8"
+          className="bg-white/5 backdrop-blur-xl border border-white/20 rounded-2xl p-8 mb-8"
         >
-          <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
-            <div className="flex items-center space-x-3 mb-4">
-              <MapPin className="w-5 h-5 text-blue-400" />
-              <h3 className="text-lg font-semibold text-white">Location</h3>
-            </div>
-            <p className="text-white/80">{business.location}</p>
+          <div className="text-center mb-6">
+            <h3 className="text-2xl font-semibold text-white mb-2">Loyalty Program</h3>
+            <p className="text-white/60">Earn points with every visit</p>
           </div>
-
-          <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
-            <div className="flex items-center space-x-3 mb-4">
-              <Clock className="w-5 h-5 text-purple-400" />
-              <h3 className="text-lg font-semibold text-white">Industry</h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                <Target className="w-8 h-8 text-white" />
+              </div>
+              <h4 className="text-lg font-semibold text-white mb-1">Goal</h4>
+              <p className="text-white/80">{business.loyalty_visits_required} visits</p>
             </div>
-            <p className="text-white/80">{business.industry}</p>
-          </div>
-
-          <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
-            <div className="flex items-center space-x-3 mb-4">
-              <Phone className="w-5 h-5 text-green-400" />
-              <h3 className="text-lg font-semibold text-white">Contact</h3>
+            
+            <div className="text-center">
+              <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                <Coffee className="w-8 h-8 text-white" />
+              </div>
+              <h4 className="text-lg font-semibold text-white mb-1">Reward</h4>
+              <p className="text-white/80">Free coffee</p>
             </div>
-            <p className="text-white/80">{business.phone}</p>
-          </div>
-
-          <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
-            <div className="flex items-center space-x-3 mb-4">
-              <Globe className="w-5 h-5 text-yellow-400" />
-              <h3 className="text-lg font-semibold text-white">Website</h3>
+            
+            <div className="text-center">
+              <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                <Star className="w-8 h-8 text-white" />
+              </div>
+              <h4 className="text-lg font-semibold text-white mb-1">Status</h4>
+              <p className="text-white/80">Ready to check in</p>
             </div>
-            <p className="text-white/80">{business.website}</p>
           </div>
         </motion.div>
 

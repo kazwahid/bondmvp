@@ -17,6 +17,7 @@ export interface Business {
   loyalty_visits_required: number
   velocity_minutes?: number | null
   manager_pin?: string | null
+  customer_instructions?: string | null
   created_at: string
 }
 

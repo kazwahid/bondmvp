@@ -52,7 +52,7 @@ export function Header() {
   const navigation = [
     { name: 'About', href: '#about' },
     { name: 'Studio', href: '#studio' },
-    { name: 'Insights', href: '#insights' },
+    { name: 'Insights', href: '/insights' },
     { name: 'Contact', href: '#contact' }
   ]
 
@@ -102,13 +102,13 @@ export function Header() {
               transition={{ delay: 0.4, duration: 0.6 }}
             >
               <Link
-                href="/auth?mode=signup"
+                href="/dashboard"
                 className={`btn-contact-minimal group relative transition-colors duration-500 ${
                   isLightBackground ? 'text-gray-900' : 'text-white'
                 }`}
               >
                 <span className="relative z-10 flex items-center text-sm font-medium tracking-wider">
-                  Start Your Project
+                  Your Business
                   <BarChart3 className="ml-2 w-4 h-4" />
                   <motion.div 
                     className="ml-2 w-1 h-1 bg-accent rounded-full" 

@@ -265,45 +265,45 @@ export default function Dashboard() {
 
       {/* Premium Animated Header */}
       <header className="sticky top-0 z-50 bg-slate-950/95 backdrop-blur-3xl border-b border-slate-800/50 shadow-2xl">
-        <div className="max-w-7xl mx-auto px-8 py-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+          <div className="flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center justify-center sm:justify-start space-x-3 sm:space-x-6">
               <div className="relative group">
-                <div className="w-16 h-16 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 rounded-3xl flex items-center justify-center shadow-2xl transform group-hover:scale-110 transition-all duration-500 overflow-hidden">
+                <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 rounded-3xl flex items-center justify-center shadow-2xl transform group-hover:scale-110 transition-all duration-500 overflow-hidden">
                   <BrandIdentity size="sm" variant="light" showTagline={false} />
                 </div>
                 {/* Enhanced animated glow effect */}
                 <div className="absolute -inset-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-3xl blur-xl opacity-0 group-hover:opacity-30 transition-opacity duration-500"></div>
                 <div className="absolute -inset-4 bg-gradient-to-r from-blue-400 to-purple-400 rounded-3xl blur-2xl opacity-0 group-hover:opacity-10 transition-opacity duration-700"></div>
               </div>
-              <div className="space-y-1">
-                <h1 className="text-4xl font-bold text-white tracking-tight bg-gradient-to-r from-white to-slate-200 bg-clip-text text-transparent">Dashboard</h1>
-                <p className="text-slate-400 text-xl font-medium">Welcome back, {business?.business_name || 'Business Owner'}</p>
+              <div className="space-y-1 text-center sm:text-left">
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white tracking-tight bg-gradient-to-r from-white to-slate-200 bg-clip-text text-transparent">Dashboard</h1>
+                <p className="text-slate-400 text-base sm:text-lg lg:text-xl font-medium">Welcome back, {business?.business_name || 'Business Owner'}</p>
               </div>
             </div>
 
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center justify-center sm:justify-end space-x-2 sm:space-x-4">
               <button
                 onClick={() => router.push('/qr')}
-                className="group px-6 py-3 bg-slate-800/80 text-slate-200 rounded-2xl font-semibold hover:bg-slate-700 hover:shadow-xl transition-all duration-300 flex items-center space-x-3 border border-slate-700/60 hover:border-slate-500/80 hover:scale-105 transform"
+                className="group px-3 sm:px-6 py-2 sm:py-3 bg-slate-800/80 text-slate-200 rounded-2xl font-semibold hover:bg-slate-700 hover:shadow-xl transition-all duration-300 flex items-center space-x-2 sm:space-x-3 border border-slate-700/60 hover:border-slate-500/80 hover:scale-105 transform text-sm sm:text-base"
               >
-                <QrCode className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
+                <QrCode className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform duration-300" />
                 <span>QR Code</span>
               </button>
 
               <button
                 onClick={() => router.push('/loyalty-settings')}
-                className="group px-6 py-3 bg-slate-800/80 text-slate-200 rounded-2xl font-semibold hover:bg-slate-700 hover:shadow-xl transition-all duration-300 flex items-center space-x-3 border border-slate-700/60 hover:border-slate-500/80 hover:scale-105 transform"
+                className="group px-3 sm:px-6 py-2 sm:py-3 bg-slate-800/80 text-slate-200 rounded-2xl font-semibold hover:bg-slate-700 hover:shadow-xl transition-all duration-300 flex items-center space-x-2 sm:space-x-3 border border-slate-700/60 hover:border-slate-500/80 hover:scale-105 transform text-sm sm:text-base"
               >
-                <Settings className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
+                <Settings className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform duration-300" />
                 <span>Settings</span>
               </button>
 
               <button
                 onClick={handleSignOut}
-                className="px-6 py-3 bg-red-900/80 text-red-200 rounded-2xl font-semibold hover:bg-red-800 hover:shadow-xl transition-all duration-300 flex items-center space-x-3 border border-red-700/60 hover:border-red-600/80 hover:scale-105 transform"
+                className="px-3 sm:px-6 py-2 sm:py-3 bg-red-900/80 text-red-200 rounded-2xl font-semibold hover:bg-red-800 hover:shadow-xl transition-all duration-300 flex items-center space-x-2 sm:space-x-3 border border-red-700/60 hover:border-red-600/80 hover:scale-105 transform text-sm sm:text-base"
               >
-                <LogOut className="w-5 h-5" />
+                <LogOut className="w-4 h-4 sm:w-5 sm:h-5" />
                 <span>Sign Out</span>
               </button>
             </div>
@@ -312,25 +312,25 @@ export default function Dashboard() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-8 py-12 space-y-12 relative z-10">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12 space-y-8 sm:space-y-12 relative z-10">
         {/* Welcome Section with Enhanced Animated Text */}
-        <section className={`text-center space-y-8 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+        <section className={`text-center space-y-6 sm:space-y-8 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
           <div className="relative">
-            <h2 className="text-6xl font-bold text-white tracking-tight mb-6">
+            <h2 className="text-3xl sm:text-4xl lg:text-6xl font-bold text-white tracking-tight mb-4 sm:mb-6 px-2">
               <span className="bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent animate-pulse">
                 Ready to Brew Success?
               </span>
             </h2>
-            <p className="text-xl text-slate-400 font-medium leading-relaxed max-w-3xl mx-auto">
+            <p className="text-base sm:text-lg lg:text-xl text-slate-400 font-medium leading-relaxed max-w-3xl mx-auto px-4">
               Your coffee shop is buzzing with activity. Here's what's happening today.
             </p>
             </div>
         </section>
         {/* Enhanced KPI Cards with Advanced Animations */}
-        <section className={`grid grid-cols-1 md:grid-cols-3 gap-8 transition-all duration-1000 delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+        <section className={`grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 transition-all duration-1000 delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
           {/* Total Check-ins */}
           <div 
-            className={`group relative overflow-hidden bg-gradient-to-br from-slate-900 to-slate-800 rounded-3xl p-8 border border-slate-700/50 shadow-2xl transition-all duration-700 hover:-translate-y-3 transform hover:scale-[1.02] cursor-pointer ${hoveredCard === 'checkins' ? 'border-blue-500/50 shadow-blue-500/25' : ''}`}
+            className={`group relative overflow-hidden bg-gradient-to-br from-slate-900 to-slate-800 rounded-3xl p-6 sm:p-8 border border-slate-700/50 shadow-2xl transition-all duration-700 hover:-translate-y-3 transform hover:scale-[1.02] cursor-pointer ${hoveredCard === 'checkins' ? 'border-blue-500/50 shadow-blue-500/25' : ''}`}
             onMouseEnter={() => setHoveredCard('checkins')}
             onMouseLeave={() => setHoveredCard(null)}
           >
@@ -339,14 +339,14 @@ export default function Dashboard() {
             <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
             <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/3 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1500"></div>
             
-            <div className="relative z-10 space-y-6">
+            <div className="relative z-10 space-y-4 sm:space-y-6">
               <div className="flex items-center justify-between">
-                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-500">
-                  <Activity className="w-8 h-8 text-white" />
+                <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-500">
+                  <Activity className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                 </div>
                 <div className="text-right">
-                  <p className="text-slate-400 text-sm font-medium">Total Check-ins</p>
-                  <p className="text-4xl font-bold text-white">{stats?.totalVisits || 0}</p>
+                  <p className="text-slate-400 text-xs sm:text-sm font-medium">Total Check-ins</p>
+                  <p className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white">{stats?.totalVisits || 0}</p>
                 </div>
               </div>
 

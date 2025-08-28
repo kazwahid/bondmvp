@@ -33,6 +33,8 @@ CREATE UNIQUE INDEX IF NOT EXISTS businesses_slug_idx ON businesses(slug) WHERE 
 -- Velocity rule and manager override (MVP)
 ALTER TABLE businesses ADD COLUMN IF NOT EXISTS velocity_minutes INTEGER NOT NULL DEFAULT 5;
 ALTER TABLE businesses ADD COLUMN IF NOT EXISTS manager_pin TEXT;
+-- Custom customer instructions for check-in page
+ALTER TABLE businesses ADD COLUMN IF NOT EXISTS customer_instructions TEXT;
 
 
 

@@ -5,7 +5,7 @@ import { motion, useScroll, useTransform } from 'framer-motion'
 import { gsap } from 'gsap'
 import Link from 'next/link'
 import { Logo } from '@/components/brand/Logo'
-import DarkVeil from '@/components/ui/DarkVeil'
+import Plasma from '@/components/ui/Plasma'
 
 export default function MinimalHero() {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -65,16 +65,15 @@ export default function MinimalHero() {
         ref={containerRef}
         className="relative min-h-screen flex items-center justify-center overflow-hidden animated-frame"
       >
-        {/* DarkVeil 3D Background */}
+        {/* Plasma Background */}
         <div className="absolute inset-0">
-          <DarkVeil
-            hueShift={230}
-            noiseIntensity={0.3}
-            scanlineIntensity={0.02}
-            speed={1}
-            scanlineFrequency={0.3}
-            warpAmount={0.2}
-            resolutionScale={1}
+          <Plasma 
+            color="#ff6b35"
+            speed={0.7}
+            direction="pingpong"
+            scale={1.1}
+            opacity={0.8}
+            mouseInteractive={true}
           />
         </div>
         
@@ -220,20 +219,23 @@ export default function MinimalHero() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.2 }}
-              className="mb-16"
+              className="mb-10"
             >
               <Logo variant="light" size="lg" showText={false} />
             </motion.div>
 
             {/* Main Headline */}
-            <div ref={textRef} className="mb-20">
+            <div ref={textRef} className="mb-14">
               <motion.h1 
-                className="text-6xl md:text-6xl lg:text-6xl font-black leading-[0.8] tracking-tight text-white font-display uppercase text-reveal"
+                className="text-9xl md:text-9xl lg:text-7xl font-black leading-[0.8] tracking-tight text-white font-display uppercase text-reveal"
                 initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 1.2, delay: 0.5 }}
               >
-                {splitText(' Crafting memorable experience')}
+                  Crafting Memorable
+            <span className="block bg-gradient-to-r from-accent to-accent/80 bg-clip-text text-orange">
+              Experiences
+            </span>
               </motion.h1>
             </div>
 
@@ -242,7 +244,7 @@ export default function MinimalHero() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1.2, duration: 0.8 }}
-              className="text-xl md:text-2xl text-muted max-w-3xl mx-auto font-light font-sans mb-20 leading-relaxed"
+              className="text-xl md:text-2xl text-muted max-w-3xl mx-auto font-light font-sans mb-10 leading-relaxed"
             >
               BondStudio
             </motion.p>
@@ -252,7 +254,7 @@ export default function MinimalHero() {
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1.5, duration: 0.8 }}
-              className="flex flex-col sm:flex-row gap-8 justify-center mb-20"
+              className="flex flex-col sm:flex-row gap-8 justify-center mb-10"
             >
               <Link
                 href="/auth?mode=signup"

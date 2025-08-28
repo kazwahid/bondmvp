@@ -11,7 +11,7 @@ import { useAuth } from '@/components/auth/AuthProvider'
 
 export default function AuthPage() {
   const [isLoading, setIsLoading] = useState(true)
-  const [mode, setMode] = useState<'signin' | 'signup' | 'email-confirmation'>('signin')
+  const [mode, setMode] = useState<'signin' | 'signup' | 'email-confirmation' | 'forgot-password' | 'reset-sent'>('signin')
   const [showPassword, setShowPassword] = useState(false)
   const [authError, setAuthError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -25,7 +25,7 @@ export default function AuthPage() {
   
   const searchParams = useSearchParams()
   const router = useRouter()
-  const { signIn, signUp } = useAuth()
+  const { signIn, signUp, resetPassword } = useAuth()
 
   useEffect(() => {
     // Simulate loading
@@ -68,6 +68,18 @@ export default function AuthPage() {
           // Show email confirmation message instead of redirecting
           setMode('email-confirmation')
         }
+      } else if (mode === 'forgot-password') {
+        // Handle forgot password logic
+        const { error } = await resetPassword(formData.email)
+        
+        if (error) {
+          setAuthError(error.message)
+          setIsSubmitting(false)
+          return
+        }
+        
+        // Show success message
+        setMode('reset-sent')
       } else {
         // Handle signin logic
         const { user, error } = await signIn(formData.email, formData.password)
@@ -158,25 +170,30 @@ export default function AuthPage() {
       </div>
 
       {/* Main Content */}
-      <div className="relative z-10 w-full max-w-md">
+      <div className="relative z-10 w-full max-w-md mx-auto px-4 sm:px-0">
         {/* Logo and Header */}
         <motion.div
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="text-center mb-12"
+          className="text-center mb-8 sm:mb-12"
         >
-          <div className="flex justify-center mb-6">
+          <div className="flex justify-center mb-4 sm:mb-6">
             <Logo variant="light" size="lg" showText={false} />
           </div>
-          <h1 className="text-3xl font-bold text-white font-display uppercase tracking-wider mb-2">
-            {mode === 'signin' ? 'Welcome Back' : 'Join Bond Studio'}
+          <h1 className="text-2xl sm:text-3xl font-bold text-white font-display uppercase tracking-wider mb-2 px-2">
+            {mode === 'signin' ? 'Welcome Back' : 
+             mode === 'signup' ? 'Join Bond Studio' :
+             mode === 'forgot-password' ? 'Reset Password' :
+             mode === 'reset-sent' ? 'Check Your Email' :
+             'Welcome to BondStudio!'}
           </h1>
-          <p className="text font-sans">
-            {mode === 'signin' 
-              ? 'continue your journey' 
-              : 'start your journey'
-            }
+          <p className="text-sm sm:text-base font-sans px-2">
+            {mode === 'signin' ? 'continue your journey' : 
+             mode === 'signup' ? 'start your journey' :
+             mode === 'forgot-password' ? 'we\'ll help you get back in' :
+             mode === 'reset-sent' ? 'password reset link sent' :
+             'account created successfully'}
           </p>
         </motion.div>
 
@@ -185,7 +202,7 @@ export default function AuthPage() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="bg-surface/50 backdrop-blur-xl border border-border rounded-2xl p-8"
+          className="bg-surface/50 backdrop-blur-xl border border-border rounded-2xl p-6 sm:p-8"
         >
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Error Display */}
@@ -244,28 +261,41 @@ export default function AuthPage() {
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-white mb-2">
-                Password
-              </label>
-              <div className="relative">
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  value={formData.password}
-                  onChange={(e) => handleInputChange('password', e.target.value)}
-                  className="w-full px-4 py-3 bg-bg/50 border border-border rounded-lg text-white placeholder-muted focus:border-accent focus:outline-none transition-colors pr-12"
-                  placeholder="Enter your password"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted hover:text-white transition-colors"
-                >
-                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                </button>
+            {mode !== 'forgot-password' && (
+              <div>
+                <label className="block text-sm font-medium text-white mb-2">
+                  Password
+                </label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    value={formData.password}
+                    onChange={(e) => handleInputChange('password', e.target.value)}
+                    className="w-full px-4 py-3 bg-bg/50 border border-border rounded-lg text-white placeholder-muted focus:border-accent focus:outline-none transition-colors pr-12"
+                    placeholder="Enter your password"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted hover:text-white transition-colors"
+                  >
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
+                </div>
+                {mode === 'signin' && (
+                  <div className="mt-2 text-right">
+                    <button
+                      type="button"
+                      onClick={() => setMode('forgot-password')}
+                      className="text-sm text-accent hover:text-accent-bright transition-colors"
+                    >
+                      Forgot your password?
+                    </button>
+                  </div>
+                )}
               </div>
-            </div>
+            )}
 
             {mode === 'signup' && (
               <div>
@@ -294,11 +324,17 @@ export default function AuthPage() {
                 {isSubmitting ? (
                   <>
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                    {mode === 'signin' ? 'Signing In...' : 'Creating Account...'}
+                    {mode === 'signin' ? 'Signing In...' : 
+                     mode === 'signup' ? 'Creating Account...' :
+                     mode === 'forgot-password' ? 'Sending Reset Link...' :
+                     'Processing...'}
                   </>
                 ) : (
                   <>
-                    {mode === 'signin' ? 'Sign In' : 'Create Account'}
+                    {mode === 'signin' ? 'Sign In' : 
+                     mode === 'signup' ? 'Create Account' :
+                     mode === 'forgot-password' ? 'Send Reset Link' :
+                     'Submit'}
                     <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </>
                 )}
@@ -324,7 +360,7 @@ export default function AuthPage() {
                 <CheckCircle className="w-10 h-10 text-white" />
               </div>
               <div className="space-y-3">
-                <h3 className="text-2xl font-bold text-white">Welcome to BondStudio! 🎉</h3>
+                <h3 className="text-2xl font-bold text-white">Welcome to BondStudio!</h3>
                 <p className="text-muted text-lg leading-relaxed max-w-md mx-auto">
                   We've sent a confirmation link to <span className="text-white font-semibold">{formData.email}</span>. 
                   Please check your inbox and click the link to verify your account.
@@ -361,18 +397,102 @@ export default function AuthPage() {
             </motion.div>
           )}
 
-          {/* Mode Toggle */}
-          <div className="mt-8 text-center">
-            <p className="text-muted font-sans">
-              {mode === 'signin' ? "Don't have an account?" : "Already have an account?"}
-            </p>
-            <button
-              onClick={() => setMode(mode === 'signin' ? 'signup' : 'signin')}
-              className="text-accent hover:text-accent-bright font-medium transition-colors mt-2"
+          {/* Forgot Password Instructions */}
+          {mode === 'forgot-password' && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mt-8 text-center space-y-6"
             >
-              {mode === 'signin' ? 'Sign up here' : 'Sign in here'}
-            </button>
-          </div>
+              <div className="space-y-3">
+                <h3 className="text-2xl font-bold text-white">Reset Your Password</h3>
+                <p className="text-muted text-lg leading-relaxed max-w-md mx-auto">
+                  Enter your email address above and click "Send Reset Link" to receive a password reset email.
+                </p>
+              </div>
+              <div className="space-y-3">
+                <button
+                  onClick={() => setMode('signin')}
+                  className="text-accent hover:text-accent-bright font-medium transition-colors"
+                >
+                  ← Back to Sign In
+                </button>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Password Reset Sent Message */}
+          {mode === 'reset-sent' && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mt-8 text-center space-y-6"
+            >
+              <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto shadow-2xl">
+                <CheckCircle className="w-10 h-10 text-white" />
+              </div>
+              <div className="space-y-3">
+                <h3 className="text-2xl font-bold text-white">Check Your Email </h3>
+                <p className="text-muted text-lg leading-relaxed max-w-md mx-auto">
+                  We've sent a password reset link to <span className="text-white font-semibold">{formData.email}</span>. 
+                  Please check your inbox and click the link to reset your password.
+                </p>
+                <p className="text-muted text-sm">
+                  The link will expire in 1 hour for security reasons.
+                </p>
+              </div>
+              <div className="space-y-3">
+                <button
+                  onClick={() => setMode('signin')}
+                  className="px-8 py-3 bg-accent hover:bg-accent-bright text-white rounded-xl font-semibold transition-all duration-300 hover:scale-105"
+                >
+                  Back to Sign In
+                </button>
+                <div className="space-y-2">
+                  <p className="text-muted text-sm">
+                    Didn't receive the email? Check your spam folder or{' '}
+                    <button
+                      onClick={() => setMode('forgot-password')}
+                      className="text-accent hover:text-accent-bright underline"
+                    >
+                      try again
+                    </button>
+                  </p>
+                  <p className="text-xs text-muted/60">
+                    Having trouble? Contact us at{' '}
+                    <a href="mailto:hello@bondstudio.com" className="text-accent hover:text-accent-bright underline">
+                      hello@bondstudio.com
+                    </a>
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Mode Toggle */}
+          {mode !== 'email-confirmation' && mode !== 'reset-sent' && (
+            <div className="mt-8 text-center">
+              <p className="text-muted font-sans">
+                {mode === 'signin' ? "Don't have an account?" : 
+                 mode === 'signup' ? "Already have an account?" :
+                 mode === 'forgot-password' ? "Remember your password?" :
+                 "Need to reset your password?"}
+              </p>
+              <button
+                onClick={() => {
+                  if (mode === 'signin') setMode('signup')
+                  else if (mode === 'signup') setMode('signin')
+                  else if (mode === 'forgot-password') setMode('signin')
+                }}
+                className="text-accent hover:text-accent-bright font-medium transition-colors mt-2"
+              >
+                {mode === 'signin' ? 'Sign up here' : 
+                 mode === 'signup' ? 'Sign in here' :
+                 mode === 'forgot-password' ? 'Back to sign in' :
+                 'Try again'}
+              </button>
+            </div>
+          )}
         </motion.div>
 
         {/* Back to Home */}
