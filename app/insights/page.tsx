@@ -143,13 +143,10 @@ export default function InsightsPage() {
   return (
     <div className="min-h-screen bg-bg text-fg">
       <Header />
-   
-
-
 
       {/* Data Driven Insights Section */}
-      <section className="py-12 sm:py-16 lg:py-24 bg-gradient-to-br from-bg to-orange-50/5">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-24 bg-gradient-to-br from-bg to-orange-50/5">
+        <div className="max-w-7xl mx-auto px-6">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -166,11 +163,11 @@ export default function InsightsPage() {
             >
             
             </motion.div>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-bold text-fg mb-4 sm:mb-6 tracking-tight">
+            <h2 className="text-4xl md:text-5xl font-display font-bold text-fg mb-6 tracking-tight">
               DATA-DRIVEN INSIGHTS
             </h2>
-            <p className="text-lg sm:text-xl text-muted max-w-3xl mx-auto leading-relaxed px-4 sm:px-0">
-             Predicted numbers from our model
+            <p className="text-xl text-muted max-w-3xl mx-auto leading-relaxed">
+             Predicted numbers from Our Model
             </p>
           </motion.div>
 
@@ -236,7 +233,7 @@ export default function InsightsPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="bg-surface/30 backdrop-blur-xl border border-border/50 rounded-3xl p-8 hover:border-accent/30 transition-all duration-500"
+           className="bg-surface/30 backdrop-blur-xl border border-border/50 rounded-3xl p-8 hover:border-orange-300 transition-all duration-500"
             >
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-xl font-bold text-fg uppercase tracking-wide flex items-center space-x-2">
@@ -357,9 +354,9 @@ export default function InsightsPage() {
       </section>
 
          
-             {/* Magnetic Interaction Section  */}
-       <section className="py-12 sm:py-16 lg:py-24 bg-gradient-to-br from-bg to-orange-50/5 relative overflow-hidden">
-         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Magnetic Interaction Section  */}
+      <section className="py-24 bg-gradient-to-br from-bg to-orange-50/5 relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-6">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -376,16 +373,16 @@ export default function InsightsPage() {
             >
               
             </motion.div>
-                         <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-bold text-fg mb-4 sm:mb-6 tracking-tight">
-               <span className="text-accent-500">MAGNETIC</span> INTERACTION
-             </h2>
-             <p className="text-lg sm:text-xl text-muted max-w-3xl mx-auto leading-relaxed px-4 sm:px-0">
-             Build Connections - Thrive Together
-             </p>
+            <h2 className="text-4xl md:text-5xl font-display font-bold text-fg mb-6 tracking-tight">
+              <span className="text-accent-500">MAGNETIC</span> INTERACTION
+            </h2>
+            <p className="text-xl text-muted max-w-3xl mx-auto leading-relaxed">
+            Build Connections - Thrive Together
+            </p>
           </motion.div>
 
-                     {/* MagnetLines */}
-           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 items-center">
+          {/* MagnetLines */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Left Side - MagnetLines */}
             <motion.div
               initial={{ opacity: 0, x: -50 }}
@@ -420,13 +417,13 @@ export default function InsightsPage() {
             >
               <div className="space-y-6">
                 <div className="flex items-start space-x-4">
-                <div className="w-12 h-12 flex items-center justify-center flex-shrink-0">
-                <Users className="w-6 h-6 text-orange-500" />
+                  <div className="w-12 h-12 flex items-center justify-center flex-shrink-0">
+                    <Users className="w-6 h-6 text-orange-500" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-fg mb-2">Business</h3>
+                    <h3 className="text-xl font-bold text-orange-500 mb-2">Business</h3>
                     <p className="text-muted leading-relaxed">
-                      Track customer behavior, sales, and business growth.
+                      Track customers, sales pattern, and business growth.
                     </p>
                   </div>
                 </div>
@@ -436,7 +433,7 @@ export default function InsightsPage() {
                 <Heart className="w-6 h-6 text-orange-500" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-fg mb-2">Trust</h3>
+                    <h3 className="text-xl font-bold text-orange-500 mb-2">Trust</h3>
                     <p className="text-muted leading-relaxed">
                       Build lasting relationships with automated loyalty programs.
                     </p>
@@ -444,11 +441,11 @@ export default function InsightsPage() {
                 </div>
 
                 <div className="flex items-start space-x-4">
-                  <div className="w-12 h-12 flex items-center justify-center flex-shrink-0">
-                  <TrendingUp className="w-6 h-6 text-orange-500" />
+                <div className="w-12 h-12 flex items-center justify-center flex-shrink-0">
+                <TrendingUp className="w-6 h-6 text-orange-500" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-fg mb-2">Grow</h3>
+                    <h3 className="text-xl font-bold text-orange-500 mb-2">Grow</h3>
                     <p className="text-muted leading-relaxed">
                       Focus on what matters most - growing your business.
                     </p>
@@ -460,10 +457,10 @@ export default function InsightsPage() {
               
                 <Link 
                   href="/#contact"
-                  className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 bg-surface/50 hover:bg-surface/70 text-orange-500 rounded-xl sm:rounded-2xl font-semibold transition-all duration-300 hover:scale-105 border border-border flex items-center justify-center space-x-2 group text-sm sm:text-base touch-friendly"
+                  className="px-8 py-4 bg-surface/50 hover:bg-surface/70 text-orange-500 rounded-2xl font-semibold transition-all duration-300 hover:scale-105 border border-border flex items-center space-x-2 group"
                 >
                   <span>Learn More</span>
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
+                  <ArrowRight className="w-5 h-5 text-secondary group-hover:translate-x-1 transition-transform duration-300" />
                 </Link>
               </div>
             </motion.div>
@@ -471,16 +468,16 @@ export default function InsightsPage() {
         </div>
       </section>
 
-             {/* Asymmetrical Partner Showcase & CTA Section */}
-       <section className="py-12 sm:py-16 lg:py-24 bg-gradient-to-br from-surface to-orange-50/5 relative overflow-hidden">
-         {/* Subtle background pattern */}
-         <div className="absolute inset-0 opacity-5">
-           <div className="absolute inset-0" style={{
-             backgroundImage: `radial-gradient(circle at 25% 25%, #FF6B35 2px, transparent 2px), radial-gradient(circle at 75% 75%, #FF6B35 2px, transparent 2px)`,
-             backgroundSize: '60px 60px'
-           }} />
-         </div>
-         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Asymmetrical Partner Showcase & CTA Section */}
+      <section className="py-24 bg-gradient-to-br from-surface to-orange-50/5 relative overflow-hidden">
+        {/* Subtle background pattern */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `radial-gradient(circle at 25% 25%, #FF6B35 2px, transparent 2px), radial-gradient(circle at 75% 75%, #FF6B35 2px, transparent 2px)`,
+            backgroundSize: '60px 60px'
+          }} />
+        </div>
+        <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Left Side - CTA Section */}
             <motion.div
@@ -490,9 +487,9 @@ export default function InsightsPage() {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="space-y-8 text-left"
             >
-                             <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-bold text-fg tracking-tight">
-                 Work is <span className="text-accent-500">Bond</span>
-               </h2>
+              <h2 className="text-6xl md:text-7xl font-display font-bold text-fg tracking-tight">
+                Work is <span className="text-accent-500">Bond</span>
+              </h2>
             
               <motion.div
               initial={{ opacity: 0, y: 40 }}
@@ -546,14 +543,14 @@ export default function InsightsPage() {
           </div>
         </div>
       </section>
- {/* Logo Loop Section - Minimal Modern */}
- <section className="py-12 sm:py-16 lg:py-24 bg-gradient-to-br from-surface to-orange-50/10">
-         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                     {/* Logo Loop - No heading, just the loop */}
-           <div className="py-8 sm:py-12 lg:py-16">
+{/* Logo Loop Section - Minimal Modern */}
+<section className="py-24 bg-gradient-to-br from-surface to-orange-50/10">
+        <div className="max-w-7xl mx-auto px-6">
+          {/* Logo Loop - No heading, just the loop */}
+          <div className="py-16">
             <LogoLoop
               logos={[   
-                { src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/twitter/twitter-original.svg", alt: "Twitter", title: "Twitter", href: "https://twitter.com" },       
+                     
                 { src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg", alt: "MongoDB", title: "MongoDB", href: "https://mongodb.com" },
                 { src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg", alt: "Next.js", title: "Next.js", href: "https://nextjs.org" },
                 { src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/slack/slack-original.svg", alt: "Slack", title: "Slack", href: "https://slack.com" },
@@ -562,13 +559,13 @@ export default function InsightsPage() {
                 
                 { src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg", alt: "Node.js", title: "Node.js", href: "https://nodejs.org" },
                 { src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linkedin/linkedin-original.svg", alt: "LinkedIn", title: "LinkedIn", href: "https://linkedin.com" },
-                { src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/wordpress/wordpress-original.svg", alt: "WordPress", title: "WordPress", href: "https://wordpress.org" },
+                 { src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/twitter/twitter-original.svg", alt: "Twitter", title: "Twitter", href: "https://twitter.com" }, 
                 { src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/firebase/firebase-plain.svg", alt: "Firebase", title: "Firebase", href: "https://firebase.google.com" },
                 { src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg", alt: "Figma", title: "Figma", href: "https://figma.com" },
       
+                { src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/twitter/twitter-original.svg", alt: "Twitter", title: "Twitter", href: "https://twitter.com" }, 
               
-              
-          
+                { src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg", alt: "React", title: "React", href: "https://react.dev" }, 
                 { src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/android/android-original.svg", alt: "Android", title: "Android", href: "https://android.com" },
                 { src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/apple/apple-original.svg", alt: "Apple", title: "Apple", href: "https://apple.com" },
    
@@ -576,10 +573,10 @@ export default function InsightsPage() {
                
                 
               ]}
-                             speed={120}
-               direction="left"
-               logoHeight={48}
-               gap={24}
+              speed={120}
+              direction="left"
+              logoHeight={64}
+              gap={40}
               pauseOnHover
               scaleOnHover
               fadeOut
