@@ -121,7 +121,8 @@ export default function CheckInPage() {
       setError(null)
       
       // Increment visit count
-      const result = await incrementVisitWithToken(token!, business.id, customer.id)
+      const localStorageId = localStorage.getItem('bond_customer_id') || `customer_${Date.now()}`
+      const result = await incrementVisitWithToken(business.id, customer.id, localStorageId, token!)
       
       if (result) {
         // Update local state
