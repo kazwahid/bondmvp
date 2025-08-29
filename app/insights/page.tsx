@@ -148,8 +148,8 @@ export default function InsightsPage() {
 
 
       {/* Data Driven Insights Section */}
-      <section className="py-24 bg-gradient-to-br from-bg to-orange-50/5">
-        <div className="max-w-7xl mx-auto px-6">
+      <section className="py-12 sm:py-16 lg:py-24 bg-gradient-to-br from-bg to-orange-50/5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -166,10 +166,10 @@ export default function InsightsPage() {
             >
             
             </motion.div>
-            <h2 className="text-4xl md:text-5xl font-display font-bold text-fg mb-6 tracking-tight">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-bold text-fg mb-4 sm:mb-6 tracking-tight">
               DATA-DRIVEN INSIGHTS
             </h2>
-            <p className="text-xl text-muted max-w-3xl mx-auto leading-relaxed">
+            <p className="text-lg sm:text-xl text-muted max-w-3xl mx-auto leading-relaxed px-4 sm:px-0">
              Predicted numbers from our model
             </p>
           </motion.div>
@@ -357,9 +357,9 @@ export default function InsightsPage() {
       </section>
 
          
-      {/* Magnetic Interaction Section  */}
-      <section className="py-24 bg-gradient-to-br from-bg to-orange-50/5 relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6">
+             {/* Magnetic Interaction Section  */}
+       <section className="py-12 sm:py-16 lg:py-24 bg-gradient-to-br from-bg to-orange-50/5 relative overflow-hidden">
+         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -376,16 +376,16 @@ export default function InsightsPage() {
             >
               
             </motion.div>
-            <h2 className="text-4xl md:text-5xl font-display font-bold text-fg mb-6 tracking-tight">
-              <span className="text-accent-500">MAGNETIC</span> INTERACTION
-            </h2>
-            <p className="text-xl text-muted max-w-3xl mx-auto leading-relaxed">
-            Build Connections - Thrive Together
-            </p>
+                         <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-bold text-fg mb-4 sm:mb-6 tracking-tight">
+               <span className="text-accent-500">MAGNETIC</span> INTERACTION
+             </h2>
+             <p className="text-lg sm:text-xl text-muted max-w-3xl mx-auto leading-relaxed px-4 sm:px-0">
+             Build Connections - Thrive Together
+             </p>
           </motion.div>
 
-          {/* MagnetLines */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                     {/* MagnetLines */}
+           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 items-center">
             {/* Left Side - MagnetLines */}
             <motion.div
               initial={{ opacity: 0, x: -50 }}
@@ -420,8 +420,8 @@ export default function InsightsPage() {
             >
               <div className="space-y-6">
                 <div className="flex items-start space-x-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center flex-shrink-0">
-                    <Users className="w-6 h-6 text-white" />
+                <div className="w-12 h-12 flex items-center justify-center flex-shrink-0">
+                <Users className="w-6 h-6 text-orange-500" />
                   </div>
                   <div>
                     <h3 className="text-xl font-bold text-fg mb-2">Business</h3>
@@ -432,8 +432,8 @@ export default function InsightsPage() {
                 </div>
 
                 <div className="flex items-start space-x-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center flex-shrink-0">
-                    <Heart className="w-6 h-6 text-white" />
+                <div className="w-12 h-12 flex items-center justify-center flex-shrink-0">
+                <Heart className="w-6 h-6 text-orange-500" />
                   </div>
                   <div>
                     <h3 className="text-xl font-bold text-fg mb-2">Trust</h3>
@@ -444,8 +444,8 @@ export default function InsightsPage() {
                 </div>
 
                 <div className="flex items-start space-x-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center flex-shrink-0">
-                  <TrendingUp className="w-6 h-6 text-white" />
+                  <div className="w-12 h-12 flex items-center justify-center flex-shrink-0">
+                  <TrendingUp className="w-6 h-6 text-orange-500" />
                   </div>
                   <div>
                     <h3 className="text-xl font-bold text-fg mb-2">Grow</h3>
@@ -459,8 +459,8 @@ export default function InsightsPage() {
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               
                 <Link 
-                  href="/contact"
-                  className="px-8 py-4 bg-surface/50 hover:bg-surface/70 text-fg rounded-2xl font-semibold transition-all duration-300 hover:scale-105 border border-border flex items-center space-x-2 group"
+                  href="/#contact"
+                  className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 bg-surface/50 hover:bg-surface/70 text-orange-500 rounded-xl sm:rounded-2xl font-semibold transition-all duration-300 hover:scale-105 border border-border flex items-center justify-center space-x-2 group text-sm sm:text-base touch-friendly"
                 >
                   <span>Learn More</span>
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
@@ -471,16 +471,16 @@ export default function InsightsPage() {
         </div>
       </section>
 
-      {/* Asymmetrical Partner Showcase & CTA Section */}
-      <section className="py-24 bg-gradient-to-br from-surface to-orange-50/5 relative overflow-hidden">
-        {/* Subtle background pattern */}
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `radial-gradient(circle at 25% 25%, #FF6B35 2px, transparent 2px), radial-gradient(circle at 75% 75%, #FF6B35 2px, transparent 2px)`,
-            backgroundSize: '60px 60px'
-          }} />
-        </div>
-        <div className="max-w-7xl mx-auto px-6">
+             {/* Asymmetrical Partner Showcase & CTA Section */}
+       <section className="py-12 sm:py-16 lg:py-24 bg-gradient-to-br from-surface to-orange-50/5 relative overflow-hidden">
+         {/* Subtle background pattern */}
+         <div className="absolute inset-0 opacity-5">
+           <div className="absolute inset-0" style={{
+             backgroundImage: `radial-gradient(circle at 25% 25%, #FF6B35 2px, transparent 2px), radial-gradient(circle at 75% 75%, #FF6B35 2px, transparent 2px)`,
+             backgroundSize: '60px 60px'
+           }} />
+         </div>
+         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Left Side - CTA Section */}
             <motion.div
@@ -490,9 +490,9 @@ export default function InsightsPage() {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="space-y-8 text-left"
             >
-              <h2 className="text-6xl md:text-7xl font-display font-bold text-fg tracking-tight">
-                Work is <span className="text-accent-500">Bond</span>
-              </h2>
+                             <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-bold text-fg tracking-tight">
+                 Work is <span className="text-accent-500">Bond</span>
+               </h2>
             
               <motion.div
               initial={{ opacity: 0, y: 40 }}
@@ -546,11 +546,11 @@ export default function InsightsPage() {
           </div>
         </div>
       </section>
-{/* Logo Loop Section - Minimal Modern */}
-<section className="py-24 bg-gradient-to-br from-surface to-orange-50/10">
-        <div className="max-w-7xl mx-auto px-6">
-          {/* Logo Loop - No heading, just the loop */}
-          <div className="py-16">
+ {/* Logo Loop Section - Minimal Modern */}
+ <section className="py-12 sm:py-16 lg:py-24 bg-gradient-to-br from-surface to-orange-50/10">
+         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                     {/* Logo Loop - No heading, just the loop */}
+           <div className="py-8 sm:py-12 lg:py-16">
             <LogoLoop
               logos={[   
                 { src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/twitter/twitter-original.svg", alt: "Twitter", title: "Twitter", href: "https://twitter.com" },       
@@ -576,10 +576,10 @@ export default function InsightsPage() {
                
                 
               ]}
-              speed={120}
-              direction="left"
-              logoHeight={64}
-              gap={40}
+                             speed={120}
+               direction="left"
+               logoHeight={48}
+               gap={24}
               pauseOnHover
               scaleOnHover
               fadeOut

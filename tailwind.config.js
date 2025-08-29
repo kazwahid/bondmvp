@@ -7,6 +7,32 @@ module.exports = {
   ],
   theme: {
     extend: {
+      screens: {
+        'xs': '475px',
+        'sm': '640px',
+        'md': '768px',
+        'lg': '1024px',
+        'xl': '1280px',
+        '2xl': '1536px',
+        '3xl': '1920px',
+        // Mobile-first breakpoints
+        'mobile': '320px',
+        'tablet': '768px',
+        'desktop': '1024px',
+        'wide': '1280px',
+      },
+      spacing: {
+        // Mobile-optimized spacing
+        '18': '4.5rem',
+        '88': '22rem',
+        '128': '32rem',
+        '144': '36rem',
+        // Mobile-specific spacing
+        'safe-top': 'env(safe-area-inset-top)',
+        'safe-bottom': 'env(safe-area-inset-bottom)',
+        'safe-left': 'env(safe-area-inset-left)',
+        'safe-right': 'env(safe-area-inset-right)',
+      },
       colors: {
         // Bond Theme Tokens (Dark theme)
         bg: '#1C1C1C', // Deep Charcoal, primary background
@@ -99,8 +125,11 @@ module.exports = {
         '7xl': ['4.5rem', { lineHeight: '1' }],
         '8xl': ['6rem', { lineHeight: '1' }],
         '9xl': ['8rem', { lineHeight: '1' }],
-        'hero': ['clamp(3rem, 8vw, 8rem)', { lineHeight: '0.9' }],
-        'display': ['clamp(2rem, 6vw, 6rem)', { lineHeight: '1.1' }],
+        // Mobile-optimized responsive typography
+        'hero': ['clamp(2.5rem, 8vw, 8rem)', { lineHeight: '0.9' }],
+        'display': ['clamp(1.75rem, 6vw, 6rem)', { lineHeight: '1.1' }],
+        'mobile-hero': ['clamp(2rem, 6vw, 4rem)', { lineHeight: '0.9' }],
+        'mobile-display': ['clamp(1.5rem, 5vw, 3rem)', { lineHeight: '1.1' }],
       },
       borderRadius: {
         'none': '0',
@@ -125,6 +154,9 @@ module.exports = {
         // Bond hover shadows
         'bond-hover': '0 8px 32px rgba(0, 201, 167, 0.15)',
         'bond-glow': '0 0 20px rgba(0, 201, 167, 0.3)',
+        // Mobile-optimized shadows
+        'mobile': '0 2px 8px rgba(0, 0, 0, 0.1)',
+        'mobile-lg': '0 4px 16px rgba(0, 0, 0, 0.15)',
       },
       animation: {
         'fade-in': 'fadeIn 0.6s ease-out',
@@ -137,6 +169,9 @@ module.exports = {
         'shine': 'shine 2s infinite',
         'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
         'bounce-gentle': 'bounceGentle 2s infinite',
+        // Mobile-optimized animations
+        'mobile-fade-in': 'mobileFadeIn 0.4s ease-out',
+        'mobile-slide-up': 'mobileSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
       },
       keyframes: {
         fadeIn: {
@@ -174,6 +209,26 @@ module.exports = {
         bounceGentle: {
           '0%, 100%': { transform: 'translateY(0)' },
           '50%': { transform: 'translateY(-10px)' },
+        },
+        // Mobile-optimized keyframes
+        mobileFadeIn: {
+          '0%': { opacity: '0', transform: 'translateY(10px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        mobileSlideUp: {
+          '0%': { transform: 'translateY(50px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+      },
+      // Mobile-optimized container
+      container: {
+        center: true,
+        padding: {
+          DEFAULT: '1rem',
+          sm: '1.5rem',
+          md: '2rem',
+          lg: '2.5rem',
+          xl: '3rem',
         },
       },
     },

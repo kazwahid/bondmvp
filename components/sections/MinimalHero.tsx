@@ -11,6 +11,7 @@ export default function MinimalHero() {
   const containerRef = useRef<HTMLDivElement>(null)
   const textRef = useRef<HTMLDivElement>(null)
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
+  const [isMobile, setIsMobile] = useState(false)
   
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -21,34 +22,59 @@ export default function MinimalHero() {
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
 
   useEffect(() => {
+    // Check if device is mobile
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
+  useEffect(() => {
     if (!textRef.current) return
 
     // Staggered text animation with GSAP
     const chars = textRef.current.querySelectorAll('.text-reveal-char')
     
     gsap.fromTo(chars, {
-      y: 100,
+      y: isMobile ? 50 : 100,
       opacity: 0,
-      rotation: 5,
+      rotation: isMobile ? 2 : 5,
     }, {
       y: 0,
       opacity: 1,
       rotation: 0,
-      duration: 1.2,
-      stagger: 0.05,
+      duration: isMobile ? 0.8 : 1.2,
+      stagger: isMobile ? 0.03 : 0.05,
       ease: "power3.out",
       delay: 0.5
     })
-  }, [])
+  }, [isMobile])
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       setMousePosition({ x: e.clientX, y: e.clientY })
     }
 
-    window.addEventListener('mousemove', handleMouseMove)
-    return () => window.removeEventListener('mousemove', handleMouseMove)
-  }, [])
+    const handleTouchMove = (e: TouchEvent) => {
+      if (e.touches[0]) {
+        setMousePosition({ x: e.touches[0].clientX, y: e.touches[0].clientY })
+      }
+    }
+
+    if (!isMobile) {
+      window.addEventListener('mousemove', handleMouseMove)
+    } else {
+      window.addEventListener('touchmove', handleTouchMove)
+    }
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove)
+      window.removeEventListener('touchmove', handleTouchMove)
+    }
+  }, [isMobile])
 
   const splitText = (text: string) => {
     return text.split('').map((char, index) => (
@@ -63,34 +89,34 @@ export default function MinimalHero() {
       {/* Hero Section */}
       <section 
         ref={containerRef}
-        className="relative min-h-screen flex items-center justify-center overflow-hidden animated-frame"
+        className="relative min-h-screen flex items-center justify-center overflow-hidden animated-frame px-4 sm:px-6 lg:px-8"
       >
-        {/* Plasma Background */}
+        {/* Plasma Background - Performance optimized for mobile */}
         <div className="absolute inset-0">
           <Plasma 
             color="#ff6b35"
-            speed={0.7}
+            speed={isMobile ? 0.5 : 0.7}
             direction="pingpong"
-            scale={1.1}
-            opacity={0.8}
-            mouseInteractive={true}
+            scale={isMobile ? 1.0 : 1.1}
+            opacity={isMobile ? 0.6 : 0.8}
+            mouseInteractive={!isMobile}
           />
         </div>
         
         {/* Liquid Gradient Background */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-bg via-surface to-bg">
-            {/* Primary liquid orb - follows mouse */}
+            {/* Primary liquid orb - follows mouse/touch */}
             <motion.div
-              className="absolute w-[800px] h-[800px] bg-gradient-radial from-accent/20 via-accent/10 to-transparent rounded-full blur-3xl"
+              className="absolute w-[400px] h-[400px] sm:w-[600px] sm:h-[600px] lg:w-[800px] lg:h-[800px] bg-gradient-radial from-accent/20 via-accent/10 to-transparent rounded-full blur-2xl sm:blur-3xl"
               animate={{
-                x: mousePosition.x - 400,
-                y: mousePosition.y - 400,
+                x: mousePosition.x - (isMobile ? 200 : 400),
+                y: mousePosition.y - (isMobile ? 200 : 400),
                 scale: [1, 1.1, 1],
                 opacity: [0.15, 0.25, 0.15],
               }}
               transition={{
-                duration: 6,
+                duration: isMobile ? 4 : 6,
                 repeat: Infinity,
                 ease: "easeInOut"
               }}
@@ -98,119 +124,39 @@ export default function MinimalHero() {
             
             {/* Secondary floating orbs */}
             <motion.div
-              className="absolute w-[600px] h-[600px] bg-gradient-radial from-accent/15 via-accent/8 to-transparent rounded-full blur-3xl"
+              className="absolute top-1/4 right-1/4 w-[200px] h-[200px] sm:w-[300px] sm:h-[300px] bg-gradient-radial from-accent/15 to-transparent rounded-full blur-xl"
               animate={{
-                x: [0, 80, 0],
-                y: [0, -40, 0],
-                scale: [1, 1.2, 1],
+                y: [0, -20, 0],
                 opacity: [0.1, 0.2, 0.1],
+                scale: [1, 1.05, 1],
+              }}
+              transition={{
+                duration: 8,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+            />
+            
+            <motion.div
+              className="absolute bottom-1/4 left-1/4 w-[150px] h-[150px] sm:w-[250px] sm:h-[250px] bg-gradient-radial from-accent/10 to-transparent rounded-full blur-lg"
+              animate={{
+                y: [0, 15, 0],
+                opacity: [0.08, 0.15, 0.08],
+                scale: [1, 1.1, 1],
               }}
               transition={{
                 duration: 10,
                 repeat: Infinity,
-                ease: "easeInOut",
-                delay: 2
-              }}
-              style={{
-                left: '15%',
-                top: '25%'
+                ease: "easeInOut"
               }}
             />
-            
-            <motion.div
-              className="absolute w-[500px] h-[500px] bg-gradient-radial from-accent/12 via-accent/6 to-transparent rounded-full blur-2xl"
-              animate={{
-                x: [0, -60, 0],
-                y: [0, 30, 0],
-                scale: [1, 0.9, 1],
-                opacity: [0.08, 0.18, 0.08],
-              }}
-              transition={{
-                duration: 12,
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: 4
-              }}
-              style={{
-                right: '20%',
-                bottom: '20%'
-              }}
-            />
-
-            {/* Geometric accent elements */}
-            <motion.div
-              className="absolute w-96 h-96 border border-accent/20 rounded-full"
-              animate={{
-                rotate: 360,
-                scale: [1, 1.1, 1],
-                opacity: [0.05, 0.15, 0.05],
-              }}
-              transition={{
-                rotate: { duration: 30, repeat: Infinity, ease: "linear" },
-                scale: { duration: 8, repeat: Infinity, ease: "easeInOut" },
-                opacity: { duration: 6, repeat: Infinity, ease: "easeInOut" }
-              }}
-              style={{
-                left: '5%',
-                top: '15%'
-              }}
-            />
-            
-            <motion.div
-              className="absolute w-80 h-80 border border-accent/15 rounded-full"
-              animate={{
-                rotate: -360,
-                scale: [1, 0.9, 1],
-                opacity: [0.05, 0.12, 0.05],
-              }}
-              transition={{
-                rotate: { duration: 25, repeat: Infinity, ease: "linear" },
-                scale: { duration: 7, repeat: Infinity, ease: "easeInOut" },
-                opacity: { duration: 5, repeat: Infinity, ease: "easeInOut" }
-              }}
-              style={{
-                right: '10%',
-                bottom: '25%'
-              }}
-            />
-
-           
-            
-            {/* Floating particles with physics */}
-            <div className="absolute inset-0">
-              {Array.from({ length: 40 }).map((_, i) => (
-                <motion.div
-                  key={i}
-                  className="absolute w-1 h-1 bg-accent/50 rounded-full"
-                  style={{
-                    left: `${Math.random() * 100}%`,
-                    top: `${Math.random() * 100}%`,
-                  }}
-                  animate={{
-                    y: [0, -150, 0],
-                    x: [0, Math.random() * 100 - 50, 0],
-                    opacity: [0, 1, 0],
-                    scale: [0, 1.5, 0],
-                  }}
-                  transition={{
-                    duration: 5 + Math.random() * 4,
-                    repeat: Infinity,
-                    delay: Math.random() * 6,
-                    ease: "easeInOut"
-                  }}
-                />
-              ))}
-            </div>
           </div>
-          
-          {/* Enhanced overlay for better text readability */}
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 to-black/30" />
         </div>
 
         {/* Main Hero Content - Perfectly Spaced */}
         <motion.div 
           style={{ y, opacity }}
-          className="relative z-10 max-w-7xl mx-auto px-6 text-center"
+          className="relative z-10 max-w-7xl mx-auto text-center"
         >
           {/* Strategic spacing container */}
           <div className="flex flex-col items-center justify-center min-h-screen py-20">
@@ -219,23 +165,23 @@ export default function MinimalHero() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.2 }}
-              className="mb-10"
+              className="mb-8 sm:mb-10 lg:mb-10"
             >
               <Logo variant="light" size="lg" showText={false} />
             </motion.div>
 
             {/* Main Headline */}
-            <div ref={textRef} className="mb-14">
+            <div ref={textRef} className="mb-10 sm:mb-12 lg:mb-14">
               <motion.h1 
-                className="text-9xl md:text-9xl lg:text-7xl font-black leading-[0.8] tracking-tight text-white font-display uppercase text-reveal"
+                className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-black leading-[0.8] tracking-tight text-white font-display uppercase text-reveal"
                 initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 1.2, delay: 0.5 }}
               >
                   Crafting Memorable
-            <span className="block bg-gradient-to-r from-accent to-accent/80 bg-clip-text text-orange">
-              Experiences
-            </span>
+                <span className="block bg-gradient-to-r from-accent to-accent/80 bg-clip-text text-orange">
+                  Experiences
+                </span>
               </motion.h1>
             </div>
 
@@ -244,7 +190,7 @@ export default function MinimalHero() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1.2, duration: 0.8 }}
-              className="text-xl md:text-2xl text-muted max-w-3xl mx-auto font-light font-sans mb-10 leading-relaxed"
+              className="text-lg sm:text-xl md:text-2xl text-muted max-w-3xl mx-auto font-light font-sans mb-8 sm:mb-10 leading-relaxed px-4 sm:px-0"
             >
               BondStudio
             </motion.p>
@@ -254,16 +200,16 @@ export default function MinimalHero() {
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1.5, duration: 0.8 }}
-              className="flex flex-col sm:flex-row gap-8 justify-center mb-10"
+              className="flex flex-col sm:flex-row gap-6 sm:gap-8 justify-center mb-10 px-4 sm:px-0"
             >
               <Link
                 href="/auth?mode=signup"
-                className="btn-primary group relative overflow-hidden order-1 sm:order-1"
+                className="btn-primary group relative overflow-hidden order-1 sm:order-1 w-full sm:w-auto touch-friendly"
               >
-                <span className="relative z-10 flex items-center">
+                <span className="relative z-10 flex items-center justify-center">
                   CREATE BOND
                   <motion.span 
-                    className="ml-3 hover-arrow text-2xl"
+                    className="ml-3 hover-arrow text-xl sm:text-2xl"
                     initial={{ x: 0 }}
                     whileHover={{ x: 8 }}
                     transition={{ duration: 0.3 }}
@@ -284,12 +230,12 @@ export default function MinimalHero() {
 
               <Link
                 href="/auth?mode=signin"
-                className="btn-secondary group relative overflow-hidden order-2 sm:order-2"
+                className="btn-secondary group relative overflow-hidden order-2 sm:order-2 w-full sm:w-auto touch-friendly"
               >
-                <span className="relative z-10 flex items-center">
+                <span className="relative z-10 flex items-center justify-center">
                   SIGN IN
                   <motion.span 
-                    className="ml-3 text-xl"
+                    className="ml-3 text-lg sm:text-xl"
                     initial={{ x: 0 }}
                     whileHover={{ x: 4 }}
                     transition={{ duration: 0.3 }}
@@ -305,7 +251,7 @@ export default function MinimalHero() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 2.5, duration: 0.8 }}
-              className="absolute bottom-12 left-1/2 transform -translate-x-1/2 z-20"
+              className="absolute bottom-8 sm:bottom-12 left-1/2 transform -translate-x-1/2 z-20"
             >
               <motion.div
                 animate={{ y: [0, 8, 0] }}
@@ -314,8 +260,8 @@ export default function MinimalHero() {
                 onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}
               >
                 <motion.div 
-                  className="w-px h-24 bg-gradient-to-b from-muted to-transparent mb-4 group-hover:from-accent transition-colors duration-300"
-                  whileHover={{ height: 28 }}
+                  className="w-px h-16 sm:h-20 lg:h-24 bg-gradient-to-b from-muted to-transparent mb-4 group-hover:from-accent transition-colors duration-300"
+                  whileHover={{ height: isMobile ? 20 : 28 }}
                 />
                 <motion.span 
                   className="text-sm uppercase tracking-wider font-ui group-hover:text-accent transition-colors duration-300"
@@ -338,19 +284,19 @@ export default function MinimalHero() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1, duration: 1 }}
-          className="absolute top-1/4 right-1/4 w-3 h-3 bg-accent rounded-full opacity-80"
+          className="absolute top-1/4 right-1/4 w-2 h-2 sm:w-3 sm:h-3 bg-accent rounded-full opacity-80"
         />
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.2, duration: 1 }}
-          className="absolute bottom-1/3 left-1/4 w-2 h-2 bg-accent rounded-full opacity-60"
+          className="absolute bottom-1/3 left-1/4 w-1.5 h-1.5 sm:w-2 sm:h-2 bg-accent rounded-full opacity-60"
         />
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.4, duration: 1 }}
-          className="absolute top-1/2 left-1/6 w-1 h-1 bg-accent rounded-full opacity-40"
+          className="absolute top-1/2 left-1/6 w-1 h-1 sm:w-1.5 sm:h-1.5 bg-accent rounded-full opacity-40"
         />
       </section>
     </>
